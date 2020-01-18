@@ -61,12 +61,3 @@ class CColorControl(QWidget):
         painter.drawRoundedRect(-radius, -radius,
                                 diameter, diameter, radius, radius)
 
-
-if __name__ == '__main__':
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    app = QApplication(sys.argv)
-    w = CColorControl()
-    w.resize(200, 200)
-    w.show()
-    sys.exit(app.exec_())

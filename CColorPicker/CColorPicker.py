@@ -41,7 +41,6 @@ class CColorPicker(QDialog):
         layout.addWidget(self.controlWidget)
         clayout = QHBoxLayout(self.controlWidget)
 
-
         self.colorStraw = CColorStraw(self.colorView)
         clayout.addWidget(self.colorStraw)
 
@@ -67,13 +66,11 @@ class CColorPicker(QDialog):
         CColorPicker.selectedColor = color
 
     def mousePressEvent(self, event):
-        """鼠标点击事件"""
         if event.button() == Qt.LeftButton:
             self.mPos = event.pos()
         event.accept()
 
     def mouseReleaseEvent(self, event):
-        '''鼠标弹起事件'''
         self.mPos = None
         event.accept()
 
@@ -85,10 +82,6 @@ class CColorPicker(QDialog):
 
     @classmethod
     def getColor(cls, parent=None):
-        """获取选择的颜色
-        :param cls:
-        :param parent:
-        """
         if not hasattr(cls, '_colorPicker'):
             cls._colorPicker = CColorPicker(parent)
         ret = cls._colorPicker.exec_()

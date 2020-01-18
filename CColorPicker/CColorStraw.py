@@ -95,18 +95,3 @@ class CColorStraw(QPushButton):
         self._scaleWindow.updateImage(pos, image.scaled(130, 130))
 
 
-if __name__ == '__main__':
-    import sys
-    import cgitb
-    sys.excepthook = cgitb.enable(1, None, 5, '')
-    from PyQt5.QtWidgets import QDialog, QVBoxLayout
-    from PyQt5.QtCore import QTimer
-    app = QApplication(sys.argv)
-    w = QDialog()
-    layout = QVBoxLayout(w)
-    view = CColorStraw(w)
-    view.colorChanged.connect(lambda c: print(c.name()))
-    layout.addWidget(view)
-    w.exec_()
-    QTimer.singleShot(200, app.quit)
-    sys.exit(app.exec_())
