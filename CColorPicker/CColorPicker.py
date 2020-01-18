@@ -187,18 +187,14 @@ class CColorPicker(QDialog):
         slayout = QVBoxLayout(self.sliderWidget)
         slayout.setContentsMargins(0, 0, 0, 0)
         # 滑动条
-        self.rainbowSlider = CColorSlider(
-            CColorSlider.TypeRainbow, self.colorView)
+        self.rainbowSlider = CColorSlider(self.colorView)
         slayout.addWidget(self.rainbowSlider)
 
     def initSignals(self):
-        self.rainbowSlider.colorChanged.connect(self.colorPanel.createImage)
-        self.rainbowSlider.colorChanged.connect(self.colorControl.updateColor)
         self.colorPanel.colorChanged.connect(self.colorControl.updateColor)
-
         self.colorStraw.colorChanged.connect(self.colorPanel.createImage)
         self.colorStraw.colorChanged.connect(self.colorControl.updateColor)
-        # self.colorStraw.colorChanged.connect(self.rainbowSlider. ???)
+        self.colorStraw.colorChanged.connect(self.rainbowSlider.updateColor)
 
     def setColor(self, color, alpha):
         color = QColor(color)
