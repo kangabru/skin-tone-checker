@@ -1,19 +1,20 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget,\
     QGraphicsDropShadowEffect, QSpacerItem, QSizePolicy,\
-    QHBoxLayout, QPushButton
+    QHBoxLayout, QApplication
 
 from CColorPicker.CColorControl import CColorControl
 from CColorPicker.CColorPanel import CColorPanel
 from CColorPicker.CColorSlider import CColorSlider
-from CColorPicker.CColorStraw import CColorStraw
+from CColorPicker.CColorStraw import CColorStraw, getAverageColor
 from CColorPicker.styles import Stylesheet
 
 
 class CColorPicker(QDialog):
 
     selectedColor = QColor()
+    colorChanged = pyqtSignal(QColor)
 
     def __init__(self, *args, **kwargs):
         super(CColorPicker, self).__init__(*args, **kwargs)
@@ -56,9 +57,13 @@ class CColorPicker(QDialog):
         slayout.addWidget(self.rainbowSlider)
 
     def initSignals(self):
-        self.colorStraw.colorChanged.connect(self.colorPanel.createImage)
+        self.colorStraw.colorChanged.connect(self.colorPanel.updateColor)
         self.colorStraw.colorChanged.connect(self.colorControl.updateColor)
         self.colorStraw.colorChanged.connect(self.rainbowSlider.updateColor)
+
+        self.colorChanged.connect(self.colorPanel.updateColor)
+        self.colorChanged.connect(self.colorControl.updateColor)
+        self.colorChanged.connect(self.rainbowSlider.updateColor)
 
     def setColor(self, color, alpha):
         color = QColor(color)
@@ -79,6 +84,15 @@ class CColorPicker(QDialog):
             if not self.colorPanel.geometry().contains(self.mPos):
                 self.move(self.mapToGlobal(event.pos() - self.mPos))
         event.accept()
+
+    def mousePressEvent(self, event):
+        self.setCursor(Qt.CrossCursor)
+
+    def mouseReleaseEvent(self, event):
+        self.setCursor(Qt.ArrowCursor)
+
+    def mouseMoveEvent(self, event):
+        getAverageColor(event, self.colorChanged.emit)
 
     @classmethod
     def getColor(cls, parent=None):

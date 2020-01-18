@@ -60,14 +60,8 @@ class CColorStraw(QPushButton):
         font.setFamily('iconfont')
         self.setFont(font)
         self.setText('')
-        self.setToolTip('吸取屏幕颜色')
-        self._scaleWindow = ScaleWindow()
-
-        self._scaleWindow.show()
-        self._scaleWindow.hide()
 
     def closeEvent(self, event):
-        self._scaleWindow.close()
         super(CColorStraw, self).closeEvent(event)
 
     def mousePressEvent(self, event):
@@ -77,21 +71,31 @@ class CColorStraw(QPushButton):
 
     def mouseReleaseEvent(self, event):
         super(CColorStraw, self).mouseReleaseEvent(event)
-
         self.setCursor(Qt.ArrowCursor)
-        self._scaleWindow.hide()
 
     def mouseMoveEvent(self, event):
-        super(CColorStraw, self).mouseMoveEvent(event)
+        getAverageColor(event, self.colorChanged.emit)
 
-        pos = event.globalPos()
+def getAverageColor(event, emit=None):
+    pos = event.globalPos()
+    image = QApplication.primaryScreen().grabWindow(
+        int(QApplication.desktop().winId()),
+        pos.x() - 6, pos.y() - 6, 13, 13).toImage()
+    color = _getAvergaeColorFromImage(image)
+    if emit and color.isValid():
+        emit(color)
 
-        image = QApplication.primaryScreen().grabWindow(
-            int(QApplication.desktop().winId()),
-            pos.x() - 6, pos.y() - 6, 13, 13).toImage()
-        color = image.pixelColor(6, 6)
-        if color.isValid():
-            self.colorChanged.emit(color)
-        self._scaleWindow.updateImage(pos, image.scaled(130, 130))
+def _getAvergaeColorFromImage(image):
+    width, height = image.width(), image.height()
+    r, g, b, count = 0, 0, 0, 0
 
+    for w in range(width):
+        for h in range(height):
+            color = image.pixelColor(w, h)
+            _r, _g, _b, _ = color.getRgb()
+            r, g, b = r + _r, g + _g, b + _b
+            count += 1
 
+    if count:
+        r, g, b = int(r / count), int(g / count), int(b / count)
+    return QColor(r, g, b)
