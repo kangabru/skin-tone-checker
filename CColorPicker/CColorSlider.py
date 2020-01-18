@@ -147,10 +147,12 @@ class CColorSlider(QSlider):
 
         # 绘制普通状态下圆形的滑块
         circleColor = QRadialGradient(xy, xy, radius, xy, xy)
-        circleColor.setColorAt(0.5, QColor(254, 254, 254))
-        circleColor.setColorAt(0.7, QColor(0, 0, 0, 60))
-        circleColor.setColorAt(0.7, QColor(0, 0, 0, 30))
-        circleColor.setColorAt(0.9, QColor(0, 0, 0, 0))
+
+        start, end = QColor(), QColor()
+        start.setHsv(0, 255, 255)
+        end.setHsv(359, 255, 255)
+        circleColor.setColorAt(0.5, start)
+        circleColor.setColorAt(1, end)
         self._imageCircle = QImage(
             self.height(), self.height(), QImage.Format_ARGB32)
         self._imageCircle.fill(Qt.transparent)

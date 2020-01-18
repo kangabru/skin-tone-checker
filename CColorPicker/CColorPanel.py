@@ -105,8 +105,15 @@ class CColorPanel(QWidget):
         self.createImage(self._color)
 
     def createImage(self, color, alpha=255):
-        self._color = QColor(color)
-        self._color.setAlpha(255)
+        """Sets the top right color of the panel."""
+        color = QColor(color)
+        h, _, _, _ = color.getHsv()
+
+        # Choose brightest, most saturated color for the given hue. Undefined hues (greys) should default to red hue.
+        h = max(0, h)
+        color.setHsv(h, 255, 255)
+
+        self._color = color
         self._image = QImage(self.size(), QImage.Format_ARGB32)
 
         painter = QPainter()
