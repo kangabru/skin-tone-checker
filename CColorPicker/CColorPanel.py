@@ -128,6 +128,8 @@ class CColorPanel(QWidget):
         gradient.setColorAt(1, QColor.fromHslF(0.055, 0.42, 0.65, 0))
         gradient.setColorAt(0, Qt.black)
         painter.fillRect(self.rect(), gradient)
+
+        self._createSkinToneIndicator(painter)
         painter.end()
 
         w, h = self.width(), self.height()
@@ -143,6 +145,52 @@ class CColorPanel(QWidget):
                 max(min(self._pointerPos.y(), self.height() - 1), 0)
             ))
 
+
+    def _createSkinToneIndicator(self, painter: QPainter):
+        w, h = self.width(), self.height()
+
+        # (Saturation, Brightness) as percentage
+        points = [
+            (20, 58),
+            (20, 90),
+            (33, 85),
+            (37, 75),
+            (39, 51),
+            (52, 32),
+            (71, 20),
+        ]
+
+        points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
+        painter.setPen(QPen(Qt.white, 2, Qt.DashDotLine))
+        path = QPainterPath()
+
+        _x, _y = None, None
+        for x, y in points_xy:
+            if _x is not None:
+                path.lineTo(x, y)
+            path.moveTo(x, y)
+            _x, _y = x, y
+
+        painter.drawPath(path)
+
+        points = [
+            (20, 90),
+            (60, 85),
+            (20, 40),
+            (71, 20),
+        ]
+
+        points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
+        painter.setPen(QPen(Qt.yellow, 2, Qt.SolidLine))
+        path = QPainterPath()
+
+        x0, y0 = points_xy[0]
+        x1, y1 = points_xy[1]
+        x2, y2 = points_xy[2]
+        x3, y3 = points_xy[3]
+        path.moveTo(x0, y0)
+        path.cubicTo(x1, y1, x2, y2, x3, y3)
+        painter.drawPath(path)
 
 if __name__ == '__main__':
     import sys

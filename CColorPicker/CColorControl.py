@@ -1,23 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-Created on 2019年4月21日
-@author: Irony
-@site: https://pyqt5.com https://github.com/PyQt5
-@email: 892768447@qq.com
-@file: CColorPicker.CColorControl
-@description:
-"""
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPainter, QPainterPath, QColor
 from PyQt5.QtWidgets import QWidget
-
-
-__Author__ = "Irony"
-__Copyright__ = "Copyright (c) 2019 "
-__Version__ = "Version 1.0"
-
 
 class CColorControl(QWidget):
 
@@ -45,12 +28,12 @@ class CColorControl(QWidget):
         painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
         painter.setPen(Qt.NoPen)
 
-        # 变换圆心
+
         painter.translate(self.rect().center())
 
-        # 画背景方格图
+
         painter.save()
-        # 保证方格在前景圆内部
+
         diameter = min(self.width(), self.height()) - 8
         radius = diameter / 2
         path = QPainterPath()
@@ -66,7 +49,7 @@ class CColorControl(QWidget):
                                  Qt.white if x % 2 != y % 2 else Qt.darkGray)
         painter.restore()
 
-        # 画前景颜色
+
         diameter = min(self.width(), self.height()) - 4
         radius = diameter / 2
         path = QPainterPath()

@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-Created on 2019年4月19日
-@author: Irony
-@site: https://pyqt5.com https://github.com/892768447
-@email: 892768447@qq.com
-@file: CColorPicker.CColorPicker
-@description:
-"""
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget,\
@@ -16,16 +5,9 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget,\
     QHBoxLayout, QPushButton
 
 from CColorPicker.CColorControl import CColorControl
-from CColorPicker.CColorInfos import CColorInfos
-from CColorPicker.CColorPalettes import CColorPalettes
 from CColorPicker.CColorPanel import CColorPanel
 from CColorPicker.CColorSlider import CColorSlider
 from CColorPicker.CColorStraw import CColorStraw
-
-
-__Author__ = "Irony"
-__Copyright__ = 'Copyright (c) 2019 Irony'
-__Version__ = 1.0
 
 Stylesheet = """
 QLineEdit, QLabel, QTabWidget {
@@ -163,11 +145,11 @@ class CColorPicker(QDialog):
         self.colorView.setObjectName('Custom_Color_View')
         layout.addWidget(self.colorView)
 
-        # 内部布局
+
         layout = QVBoxLayout(self.colorView)
         layout.setContentsMargins(1, 1, 1, 1)
 
-        # 面板
+
         self.colorPanel = CColorPanel(self.colorView)
         layout.addWidget(self.colorPanel)
 
@@ -175,10 +157,10 @@ class CColorPicker(QDialog):
         layout.addWidget(self.controlWidget)
         clayout = QHBoxLayout(self.controlWidget)
 
-        # 取色器
+
         self.colorStraw = CColorStraw(self.colorView)
         clayout.addWidget(self.colorStraw)
-        # 小圆
+
         self.colorControl = CColorControl(self.colorView)
         clayout.addWidget(self.colorControl)
 
@@ -186,7 +168,7 @@ class CColorPicker(QDialog):
         clayout.addWidget(self.sliderWidget)
         slayout = QVBoxLayout(self.sliderWidget)
         slayout.setContentsMargins(0, 0, 0, 0)
-        # 滑动条
+
         self.rainbowSlider = CColorSlider(self.colorView)
         slayout.addWidget(self.rainbowSlider)
 
@@ -229,34 +211,3 @@ class CColorPicker(QDialog):
         if ret != QDialog.Accepted:
             return ret, QColor()
         return ret, CColorPicker.selectedColor
-
-
-def test():
-    import sys
-    import cgitb
-    sys.excepthook = cgitb.enable(1, None, 5, '')
-    from PyQt5.QtWidgets import QApplication, QLabel
-    app = QApplication(sys.argv)
-
-    def getColor():
-        ret, color = CColorPicker.getColor()
-        if ret == QDialog.Accepted:
-            r, g, b, a = color.red(), color.green(), color.blue(), color.alpha()
-            label.setText('color: rgba(%d, %d, %d, %d)' % (r, g, b, a))
-            label.setStyleSheet(
-                'background: rgba(%d, %d, %d, %d);' % (r, g, b, a))
-
-    window = QWidget()
-    window.resize(200, 200)
-    layout = QVBoxLayout(window)
-    label = QLabel('', window, alignment=Qt.AlignCenter)
-    button = QPushButton('点击选择颜色', window, clicked=getColor)
-    layout.addWidget(label)
-    layout.addWidget(button)
-    window.show()
-
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    test()
