@@ -191,7 +191,6 @@ class CColorPicker(QDialog):
         slayout.addWidget(self.rainbowSlider)
 
     def initSignals(self):
-        self.colorPanel.colorChanged.connect(self.colorControl.updateColor)
         self.colorStraw.colorChanged.connect(self.colorPanel.createImage)
         self.colorStraw.colorChanged.connect(self.colorControl.updateColor)
         self.colorStraw.colorChanged.connect(self.rainbowSlider.updateColor)

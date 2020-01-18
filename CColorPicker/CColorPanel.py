@@ -10,10 +10,8 @@ Created on 2019年4月20日
 @description: 饱和度面板
 """
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal
-from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen,\
-    QPainterPath
+from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainterPath, QBrush
 from PyQt5.QtWidgets import QWidget
-
 
 __Author__ = "Irony"
 __Copyright__ = "Copyright (c) 2019 "
@@ -35,7 +33,7 @@ class CColorPanel(QWidget):
     def reset(self):
         self.blockSignals(True)
         self._color = QColor(Qt.red)
-        self._pointerPos = self.rect().topRight() - QPoint(6, 6)
+        self._pointerPos = self.rect().topRight()
         self.update()
         self.blockSignals(False)
 
@@ -64,7 +62,6 @@ class CColorPanel(QWidget):
                 max(min(self._pointerPos.x(), self.width() - 1), 0),
                 max(min(self._pointerPos.y(), self.height() - 1), 0)
             ))
-        self._pointerPos -= QPoint(6, 6)
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -78,7 +75,6 @@ class CColorPanel(QWidget):
                 max(min(self._pointerPos.x(), self.width() - 1), 0),
                 max(min(self._pointerPos.y(), self.height() - 1), 0)
             ))
-        self._pointerPos -= QPoint(6, 6)
         self.update()
 
     def paintEvent(self, event):
@@ -92,26 +88,20 @@ class CColorPanel(QWidget):
             painter.drawRect(self.rect())
             if self._pointerPos:
                 painter.setPen(Qt.NoPen)
-                painter.drawImage(self._pointerPos, self._imagePointer)
+                painter.drawImage(self._pointerPos - QPoint(6, 6), self._imagePointer)
 
     def showEvent(self, event):
         super(CColorPanel, self).showEvent(event)
-        # 右上角
-        if not self._pointerPos:
-            self._pointerPos = self.rect().topRight() - QPoint(6, 6)
+        if not self._pointerPos: self._pointerPos = self.rect().topRight()
 
     def resizeEvent(self, event):
         super(CColorPanel, self).resizeEvent(event)
         self.createImage(self._color)
 
-    def createImage(self, color, alpha=255):
+    def createImage(self, color):
         """Sets the top right color of the panel."""
         color = QColor(color)
-        h, _, _, _ = color.getHsv()
-
-        # Choose brightest, most saturated color for the given hue. Undefined hues (greys) should default to red hue.
-        h = max(0, h)
-        color.setHsv(h, 255, 255)
+        color.setAlpha(255)
 
         self._color = color
         self._image = QImage(self.size(), QImage.Format_ARGB32)
@@ -120,19 +110,30 @@ class CColorPanel(QWidget):
         painter.begin(self._image)
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
-        # 背景色
-        painter.fillRect(self.rect(), color)
-        # 白色渐变
+
+        # Render top right corner
+        # Choose brightest, most saturated color for the given hue. Undefined hues (greys) should default to red hue.
+        h = max(0, color.hsvHue())
+        color_full = QColor.fromHsv(h, 255, 255)
+        painter.fillRect(self.rect(), color_full)
+
+        # Create vertical shading
         gradient = QLinearGradient(0, 0, self.width(), 0)
         gradient.setColorAt(0, Qt.white)
         gradient.setColorAt(1, QColor.fromHslF(0.055, 0.42, 0.65, 0))
         painter.fillRect(self.rect(), gradient)
-        # 黑色渐变
+
+        # Create horizontal shading
         gradient = QLinearGradient(0, self.height(), 0, 0)
         gradient.setColorAt(1, QColor.fromHslF(0.055, 0.42, 0.65, 0))
         gradient.setColorAt(0, Qt.black)
         painter.fillRect(self.rect(), gradient)
         painter.end()
+
+        w, h = self.width(), self.height()
+        _, s, v, _ = color.getHsvF()
+        x, y = s * w, (1 - v) * h
+        self._pointerPos = QPoint(x, y)
 
         self.update()
 
