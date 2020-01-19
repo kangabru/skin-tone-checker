@@ -7,7 +7,7 @@ from src.ColorCircle import ColorCircle
 from src.ColorDisplay import ColorDisplay
 from src.ColorHueSlider import ColorHueSlider
 from src.ColorPicker import ColorPicker, getAverageColor
-from src.ColorMessage import ColorMessage
+from src.ColorMessage import ColorMessage, ColorStats
 from src.styles import Stylesheet
 
 class App(QDialog):
@@ -51,6 +51,9 @@ class App(QDialog):
         self.hueIndicator = ColorHueSlider()
         hlayout.addWidget(self.hueIndicator)
 
+        self.stats = ColorStats()
+        vlayout.addWidget(self.stats)
+
         self.message = ColorMessage()
         vlayout.addWidget(self.message)
 
@@ -63,6 +66,7 @@ class App(QDialog):
         func(self.colorCircle.updateColor)
         func(self.hueIndicator.updateColor)
         func(self.message.updateMessage)
+        func(self.stats.updateMessage)
 
     def mousePressEvent(self, event):
         self.setCursor(Qt.CrossCursor)
