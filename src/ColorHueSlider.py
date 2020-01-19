@@ -1,6 +1,8 @@
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QLinearGradient, QColor, QImage, QPainter, QPen
+from PyQt5.QtCore import Qt, pyqtSignal, QPoint
+from PyQt5.QtGui import QLinearGradient, QColor, QImage, QPainter, QPen, QBrush, QPainterPath
 from PyQt5.QtWidgets import QSlider, QStyleOptionSlider, QStyle
+from src.SkinToneHelper import HUE_TARGET
+from typing import List, Tuple
 
 class ColorHueSlider(QSlider):
     def __init__(self, parent=None):
@@ -35,11 +37,21 @@ class ColorHueSlider(QSlider):
         painter.setPen(QPen(Qt.black, 4))
         painter.drawLine(self._x, 0, self._x, self.height())
 
-        painter.setPen(QPen(Qt.white, 1))
-        hue_target = 20 # TODO Variable
-        x_hue = hue_target / 360 * self.width()
-        painter.drawLine(x_hue, 0, x_hue, self.height())
+        painter.setPen(QPen(Qt.black, 1))
+        painter.setBrush(QBrush(Qt.black))
 
+        x_hue, h = HUE_TARGET / 360 * self.width(), self.height()
+        t_w, t_h = 5, 4 # Triangle width/height
+        path_top = self._getLinePath([(x_hue - t_w, 0), (x_hue + t_w, 0), (x_hue, t_h)])
+        path_bot = self._getLinePath([(x_hue - t_w, h), (x_hue + t_w, h), (x_hue, h - t_h)])
+        painter.drawPath(path_top)
+        painter.drawPath(path_bot)
+
+    def _getLinePath(self, points: List[Tuple[int, int]]):
+        path = QPainterPath()
+        path.moveTo(*points[0])
+        [path.lineTo(x, y) for x, y in points]
+        return path
 
     def gradientPixmap(self):
         gradient = QLinearGradient(0, 0, self.width(), 0)

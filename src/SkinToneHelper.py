@@ -1,0 +1,1 @@
+HUE_TARGET = 20 # Aas percentage
