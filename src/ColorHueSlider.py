@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QSlider, QStyleOptionSlider, QStyle
 from src.SkinToneHelper import HUE_TARGET
 from typing import List, Tuple
 
+INDICATOR_WIDTH, INDICATOR_HEIGHT = 4, 5
+
 class ColorHueSlider(QSlider):
     def __init__(self, parent=None):
         super(ColorHueSlider, self).__init__(Qt.Horizontal, parent)
@@ -40,9 +42,9 @@ class ColorHueSlider(QSlider):
         painter.setBrush(QBrush(Qt.black))
 
         x_hue, h = HUE_TARGET / 360 * self.width(), self.height()
-        t_w, t_h = 5, 4 # Triangle width/height
-        path_top = self._getLinePath([(x_hue - t_w, 0), (x_hue + t_w, 0), (x_hue, t_h)])
-        path_bot = self._getLinePath([(x_hue - t_w, h), (x_hue + t_w, h), (x_hue, h - t_h)])
+        i_w, i_h = INDICATOR_WIDTH, INDICATOR_HEIGHT
+        path_top = self._getLinePath([(x_hue - i_w, 0), (x_hue + i_w, 0), (x_hue, i_h)])
+        path_bot = self._getLinePath([(x_hue - i_w, h), (x_hue + i_w, h), (x_hue, h - i_h)])
         painter.drawPath(path_top)
         painter.drawPath(path_bot)
 
@@ -53,6 +55,7 @@ class ColorHueSlider(QSlider):
         return path
 
     def gradientPixmap(self):
+        h, o = self.height() - 2 * INDICATOR_HEIGHT, INDICATOR_HEIGHT
         gradient = QLinearGradient(0, 0, self.width(), 0)
         gradient.setColorAt(0, QColor('#ff0000'))
         gradient.setColorAt(0.17, QColor('#ffff00'))
@@ -67,7 +70,7 @@ class ColorHueSlider(QSlider):
         painter.begin(self._imageRainbow)
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
-        painter.fillRect(0, 0, self.width(), self.height(), gradient)
+        painter.fillRect(0, o, self.width(), h, gradient)
         painter.end()
 
     def updateColor(self, color: QColor):
