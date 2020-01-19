@@ -9,17 +9,20 @@ INDICATOR_WIDTH, INDICATOR_HEIGHT = 4, 5
 class ColorHueSlider(QSlider):
     def __init__(self, parent=None):
         super(ColorHueSlider, self).__init__(Qt.Horizontal, parent)
-        self._x = 0
+        self._hue = 0
         self._isFirstShow = True
         self._imageRainbow = None
 
     def reset(self):
         self.setValue(0)
 
-    def setX(self, x):
-        x = max(0, min(self.width(), x))
-        self._x = x
+    def setHue(self, hue):
+        self._hue = hue
         self.update()
+
+    def _getX(self):
+        x = self._hue * self.width()
+        return max(0, min(self.width(), x))
 
     def showEvent(self, event):
         super(ColorHueSlider, self).showEvent(event)
@@ -32,11 +35,14 @@ class ColorHueSlider(QSlider):
         self.initStyleOption(option)
         groove = self.style().subControlRect(QStyle.CC_Slider, option, QStyle.SC_SliderGroove, self)
         painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
         painter.setPen(Qt.NoPen)
         painter.drawImage(groove, self._imageRainbow)
 
         painter.setPen(QPen(Qt.black, 4))
-        painter.drawLine(self._x, 0, self._x, self.height())
+        x_px = self._getX()
+        painter.drawLine(x_px, 0, x_px, self.height())
 
         painter.setPen(QPen(Qt.black, 1))
         painter.setBrush(QBrush(Qt.black))
@@ -75,5 +81,4 @@ class ColorHueSlider(QSlider):
 
     def updateColor(self, color: QColor):
         h = color.hsvHueF()
-        posX = h * self.width()
-        self.setX(posX)
+        self.setHue(h)
