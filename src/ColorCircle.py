@@ -2,12 +2,12 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPainter, QPainterPath, QColor
 from PyQt5.QtWidgets import QWidget
 
-class CColorControl(QWidget):
+class ColorCircle(QWidget):
 
     colorChanged = pyqtSignal(QColor)
 
     def __init__(self, *args, color=Qt.red, **kwargs):
-        super(CColorControl, self).__init__(*args, **kwargs)
+        super(ColorCircle, self).__init__(*args, **kwargs)
         self._alpha = 255
         self._color = QColor(color)
         self.colorChanged.emit(self._color)
@@ -22,7 +22,7 @@ class CColorControl(QWidget):
         self.updateColor(Qt.red)
 
     def paintEvent(self, event):
-        super(CColorControl, self).paintEvent(event)
+        super(ColorCircle, self).paintEvent(event)
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setRenderHint(QPainter.SmoothPixmapTransform, True)

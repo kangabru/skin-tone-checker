@@ -3,12 +3,12 @@ from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainte
 from PyQt5.QtWidgets import QWidget
 
 
-class CColorPanel(QWidget):
+class ColorDisplay(QWidget):
 
     colorChanged = pyqtSignal(QColor)
 
     def __init__(self, *args, color=Qt.red, **kwargs):
-        super(CColorPanel, self).__init__(*args, **kwargs)
+        super(ColorDisplay, self).__init__(*args, **kwargs)
         self._color = QColor(color)
         self._image = None
         self._imagePointer = None       # 小圆环
@@ -38,7 +38,7 @@ class CColorPanel(QWidget):
         painter.end()
 
     def paintEvent(self, event):
-        super(CColorPanel, self).paintEvent(event)
+        super(ColorDisplay, self).paintEvent(event)
         if self._image:
             painter = QPainter(self)
             painter.setRenderHint(QPainter.Antialiasing, True)
@@ -51,7 +51,7 @@ class CColorPanel(QWidget):
                 painter.drawImage(self._pointerPos - QPoint(6, 6), self._imagePointer)
 
     def resizeEvent(self, event):
-        super(CColorPanel, self).resizeEvent(event)
+        super(ColorDisplay, self).resizeEvent(event)
         self.updateColor(self._color)
 
     def updateColor(self, color):

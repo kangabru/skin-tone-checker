@@ -49,12 +49,12 @@ class ScaleWindow(QWidget):
             painter.drawRoundedRect(self.rect(), radius, radius)
 
 
-class CColorStraw(QPushButton):
+class ColorPicker(QPushButton):
 
     colorChanged = pyqtSignal(QColor)
 
     def __init__(self, parent):
-        super(CColorStraw, self).__init__(parent)
+        super(ColorPicker, self).__init__(parent)
         QFontDatabase.addApplicationFontFromData(QByteArray.fromBase64(FONT))
         font = self.font() or QFont()
         font.setFamily('iconfont')
@@ -62,15 +62,15 @@ class CColorStraw(QPushButton):
         self.setText('')
 
     def closeEvent(self, event):
-        super(CColorStraw, self).closeEvent(event)
+        super(ColorPicker, self).closeEvent(event)
 
     def mousePressEvent(self, event):
-        super(CColorStraw, self).mousePressEvent(event)
+        super(ColorPicker, self).mousePressEvent(event)
 
         self.setCursor(Qt.CrossCursor)
 
     def mouseReleaseEvent(self, event):
-        super(CColorStraw, self).mouseReleaseEvent(event)
+        super(ColorPicker, self).mouseReleaseEvent(event)
         self.setCursor(Qt.ArrowCursor)
 
     def mouseMoveEvent(self, event):

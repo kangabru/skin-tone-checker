@@ -11,11 +11,11 @@ CColorPalettes {
     max-width: 322px;
     max-height: 120px;
 }
-CColorPanel {
+ColorDisplay {
     min-height: 160px;
     max-height: 160px;
 }
-CColorControl {
+ColorCircle {
     min-width: 50px;
     max-width: 50px;
     min-height: 50px;
@@ -62,7 +62,7 @@ QPushButton:pressed {
     border-color: #cbcbcb;
 }
 
-CColorStraw {
+ColorPicker {
     border: none;
     font-size: 18px;
     border-radius: 0px;

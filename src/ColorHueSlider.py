@@ -2,9 +2,9 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QLinearGradient, QColor, QImage, QPainter, QPen
 from PyQt5.QtWidgets import QSlider, QStyleOptionSlider, QStyle
 
-class CColorSlider(QSlider):
+class ColorHueSlider(QSlider):
     def __init__(self, parent=None):
-        super(CColorSlider, self).__init__(Qt.Horizontal, parent)
+        super(ColorHueSlider, self).__init__(Qt.Horizontal, parent)
         self.setObjectName('Custom_Color_Slider')
         self._x = 0
         self._isFirstShow = True
@@ -19,7 +19,7 @@ class CColorSlider(QSlider):
         self.update()
 
     def showEvent(self, event):
-        super(CColorSlider, self).showEvent(event)
+        super(ColorHueSlider, self).showEvent(event)
         if self._isFirstShow:
             self._isFirstShow = False
             self.gradientPixmap()

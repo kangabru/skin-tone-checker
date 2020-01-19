@@ -4,20 +4,20 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget,\
     QGraphicsDropShadowEffect, QSpacerItem, QSizePolicy,\
     QHBoxLayout, QApplication
 
-from CColorPicker.CColorControl import CColorControl
-from CColorPicker.CColorPanel import CColorPanel
-from CColorPicker.CColorSlider import CColorSlider
-from CColorPicker.CColorStraw import CColorStraw, getAverageColor
-from CColorPicker.styles import Stylesheet
+from src.ColorCircle import ColorCircle
+from src.ColorDisplay import ColorDisplay
+from src.ColorHueSlider import ColorHueSlider
+from src.ColorPicker import ColorPicker, getAverageColor
+from src.styles import Stylesheet
 
 
-class CColorPicker(QDialog):
+class ColorPickerUI(QDialog):
 
     selectedColor = QColor()
     colorChanged = pyqtSignal(QColor)
 
     def __init__(self, *args, **kwargs):
-        super(CColorPicker, self).__init__(*args, **kwargs)
+        super(ColorPickerUI, self).__init__(*args, **kwargs)
         self.setObjectName('Custom_Color_Dialog')
         self.setStyleSheet(Stylesheet)
         self.mPos = None
@@ -35,17 +35,17 @@ class CColorPicker(QDialog):
         layout.setContentsMargins(1, 1, 1, 1)
 
 
-        self.colorPanel = CColorPanel(self.colorView)
+        self.colorPanel = ColorDisplay(self.colorView)
         layout.addWidget(self.colorPanel)
 
         self.controlWidget = QWidget(self.colorView)
         layout.addWidget(self.controlWidget)
         clayout = QHBoxLayout(self.controlWidget)
 
-        self.colorStraw = CColorStraw(self.colorView)
+        self.colorStraw = ColorPicker(self.colorView)
         clayout.addWidget(self.colorStraw)
 
-        self.colorControl = CColorControl(self.colorView)
+        self.colorControl = ColorCircle(self.colorView)
         clayout.addWidget(self.colorControl)
 
         self.sliderWidget = QWidget(self.colorView)
@@ -53,7 +53,7 @@ class CColorPicker(QDialog):
         slayout = QVBoxLayout(self.sliderWidget)
         slayout.setContentsMargins(0, 0, 0, 0)
 
-        self.rainbowSlider = CColorSlider(self.colorView)
+        self.rainbowSlider = ColorHueSlider(self.colorView)
         slayout.addWidget(self.rainbowSlider)
 
     def initSignals(self):
@@ -68,7 +68,7 @@ class CColorPicker(QDialog):
     def setColor(self, color, alpha):
         color = QColor(color)
         color.setAlpha(alpha)
-        CColorPicker.selectedColor = color
+        ColorPickerUI.selectedColor = color
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -97,8 +97,8 @@ class CColorPicker(QDialog):
     @classmethod
     def getColor(cls, parent=None):
         if not hasattr(cls, '_colorPicker'):
-            cls._colorPicker = CColorPicker(parent)
+            cls._colorPicker = ColorPickerUI(parent)
         ret = cls._colorPicker.exec_()
         if ret != QDialog.Accepted:
             return ret, QColor()
-        return ret, CColorPicker.selectedColor
+        return ret, ColorPickerUI.selectedColor
