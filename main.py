@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QColorDialog, QDesktopWidget
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QColor
 
 from src.ColorUI import ColorUI
@@ -15,6 +15,7 @@ class App(ColorUI):
     def initUI(self):
         self.setWindowTitle("Skin Color Picker")
         self.setGeometry(-1, -1, 250, -1) # left, top, width, height
+        QApplication.setAttribute(Qt.AA_DisableWindowContextHelpButton)
         self.centerOnScreen()
         self.show()
 

@@ -19,68 +19,43 @@ class ColorUI(QDialog):
         super(ColorUI, self).__init__(*args, **kwargs)
         self.setObjectName('Custom_Color_Dialog')
         self.setStyleSheet(Stylesheet)
-        self.mPos = None
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.initUi()
         self.initSignals()
 
     def initUi(self):
-        layout = QVBoxLayout(self)
-        self.colorView = QWidget(self)
-        self.colorView.setObjectName('Custom_Color_View')
-        layout.addWidget(self.colorView)
+        vlayout = QVBoxLayout(self)
+        colorView = QWidget(self)
+        colorView.setObjectName('Custom_Color_View')
+        vlayout.addWidget(colorView)
 
-        layout = QVBoxLayout(self.colorView)
-        layout.setContentsMargins(1, 1, 1, 1)
+        vlayout = QVBoxLayout(colorView)
+        vlayout.setContentsMargins(1, 1, 1, 1)
 
-        self.colorPanel = ColorDisplay(self.colorView)
-        layout.addWidget(self.colorPanel)
+        self.colorDisplay = ColorDisplay()
+        vlayout.addWidget(self.colorDisplay)
 
-        self.controlWidget = QWidget(self.colorView)
-        layout.addWidget(self.controlWidget)
-        clayout = QHBoxLayout(self.controlWidget)
+        color_tools = QWidget()
+        vlayout.addWidget(color_tools)
+        hlayout = QHBoxLayout(color_tools)
 
-        self.colorStraw = ColorPicker(self.colorView)
-        clayout.addWidget(self.colorStraw)
+        self.colorPicker = ColorPicker()
+        hlayout.addWidget(self.colorPicker)
 
-        self.colorControl = ColorCircle(self.colorView)
-        clayout.addWidget(self.colorControl)
+        self.colorCircle = ColorCircle()
+        hlayout.addWidget(self.colorCircle)
 
-        self.sliderWidget = QWidget(self.colorView)
-        clayout.addWidget(self.sliderWidget)
-        slayout = QVBoxLayout(self.sliderWidget)
-        slayout.setContentsMargins(0, 0, 0, 0)
-
-        self.rainbowSlider = ColorHueSlider(self.colorView)
-        slayout.addWidget(self.rainbowSlider)
+        self.hueIndicator = ColorHueSlider()
+        hlayout.addWidget(self.hueIndicator)
 
     def initSignals(self):
-        self.colorStraw.colorChanged.connect(self.colorPanel.updateColor)
-        self.colorStraw.colorChanged.connect(self.colorControl.updateColor)
-        self.colorStraw.colorChanged.connect(self.rainbowSlider.updateColor)
+        self.colorPicker.colorChanged.connect(self.colorDisplay.updateColor)
+        self.colorPicker.colorChanged.connect(self.colorCircle.updateColor)
+        self.colorPicker.colorChanged.connect(self.hueIndicator.updateColor)
 
-        self.colorChanged.connect(self.colorPanel.updateColor)
-        self.colorChanged.connect(self.colorControl.updateColor)
-        self.colorChanged.connect(self.rainbowSlider.updateColor)
-
-    def setColor(self, color, alpha):
-        color = QColor(color)
-        color.setAlpha(alpha)
-        ColorUI.selectedColor = color
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.mPos = event.pos()
-        event.accept()
-
-    def mouseReleaseEvent(self, event):
-        self.mPos = None
-        event.accept()
-
-    def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.LeftButton and self.mPos:
-            if not self.colorPanel.geometry().contains(self.mPos):
-                self.move(self.mapToGlobal(event.pos() - self.mPos))
-        event.accept()
+        self.colorChanged.connect(self.colorDisplay.updateColor)
+        self.colorChanged.connect(self.colorCircle.updateColor)
+        self.colorChanged.connect(self.hueIndicator.updateColor)
 
     def mousePressEvent(self, event):
         self.setCursor(Qt.CrossCursor)
@@ -90,12 +65,3 @@ class ColorUI(QDialog):
 
     def mouseMoveEvent(self, event):
         getAverageColor(event, self.colorChanged.emit)
-
-    @classmethod
-    def getColor(cls, parent=None):
-        if not hasattr(cls, '_colorPicker'):
-            cls._colorPicker = ColorUI(parent)
-        ret = cls._colorPicker.exec_()
-        if ret != QDialog.Accepted:
-            return ret, QColor()
-        return ret, ColorUI.selectedColor

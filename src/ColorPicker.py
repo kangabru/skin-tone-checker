@@ -53,8 +53,8 @@ class ColorPicker(QPushButton):
 
     colorChanged = pyqtSignal(QColor)
 
-    def __init__(self, parent):
-        super(ColorPicker, self).__init__(parent)
+    def __init__(self):
+        super(ColorPicker, self).__init__()
         QFontDatabase.addApplicationFontFromData(QByteArray.fromBase64(FONT))
         font = self.font() or QFont()
         font.setFamily('iconfont')
