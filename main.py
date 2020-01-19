@@ -4,9 +4,9 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QColor
 
-from src.ColorPickerUI import ColorPickerUI
+from src.ColorUI import ColorUI
 
-class App(ColorPickerUI):
+class App(ColorUI):
 
     def __init__(self):
         super().__init__()
@@ -25,8 +25,8 @@ class App(ColorPickerUI):
 
     @pyqtSlot()
     def on_click(self):
-        ret, color = ColorPickerUI.getColor()
-        if ret == ColorPickerUI.Accepted:
+        ret, color = ColorUI.getColor()
+        if ret == ColorUI.Accepted:
             print(color.name())
 
 if __name__ == '__main__':

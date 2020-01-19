@@ -11,13 +11,13 @@ from src.ColorPicker import ColorPicker, getAverageColor
 from src.styles import Stylesheet
 
 
-class ColorPickerUI(QDialog):
+class ColorUI(QDialog):
 
     selectedColor = QColor()
     colorChanged = pyqtSignal(QColor)
 
     def __init__(self, *args, **kwargs):
-        super(ColorPickerUI, self).__init__(*args, **kwargs)
+        super(ColorUI, self).__init__(*args, **kwargs)
         self.setObjectName('Custom_Color_Dialog')
         self.setStyleSheet(Stylesheet)
         self.mPos = None
@@ -68,7 +68,7 @@ class ColorPickerUI(QDialog):
     def setColor(self, color, alpha):
         color = QColor(color)
         color.setAlpha(alpha)
-        ColorPickerUI.selectedColor = color
+        ColorUI.selectedColor = color
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -97,8 +97,8 @@ class ColorPickerUI(QDialog):
     @classmethod
     def getColor(cls, parent=None):
         if not hasattr(cls, '_colorPicker'):
-            cls._colorPicker = ColorPickerUI(parent)
+            cls._colorPicker = ColorUI(parent)
         ret = cls._colorPicker.exec_()
         if ret != QDialog.Accepted:
             return ret, QColor()
-        return ret, ColorPickerUI.selectedColor
+        return ret, ColorUI.selectedColor
