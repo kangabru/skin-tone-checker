@@ -7,7 +7,6 @@ from typing import List, Tuple
 class ColorHueSlider(QSlider):
     def __init__(self, parent=None):
         super(ColorHueSlider, self).__init__(Qt.Horizontal, parent)
-        self.setObjectName('Custom_Color_Slider')
         self._x = 0
         self._isFirstShow = True
         self._imageRainbow = None

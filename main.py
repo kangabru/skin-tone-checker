@@ -20,7 +20,6 @@ class App(QDialog):
         self.setGeometry(-1, -1, 250, -1) # left, top, width, height
 
         self.centerOnScreen()
-        self.setObjectName('Custom_Color_Dialog')
         self.setStyleSheet(Stylesheet)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
@@ -31,7 +30,6 @@ class App(QDialog):
     def initUi(self):
         vlayout = QVBoxLayout(self)
         colorView = QWidget(self)
-        colorView.setObjectName('Custom_Color_View')
         vlayout.addWidget(colorView)
 
         vlayout = QVBoxLayout(colorView)
