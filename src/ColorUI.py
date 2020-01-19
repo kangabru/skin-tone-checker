@@ -10,7 +10,6 @@ from src.ColorHueSlider import ColorHueSlider
 from src.ColorPicker import ColorPicker, getAverageColor
 from src.styles import Stylesheet
 
-
 class ColorUI(QDialog):
 
     selectedColor = QColor()
@@ -30,10 +29,8 @@ class ColorUI(QDialog):
         self.colorView.setObjectName('Custom_Color_View')
         layout.addWidget(self.colorView)
 
-
         layout = QVBoxLayout(self.colorView)
         layout.setContentsMargins(1, 1, 1, 1)
-
 
         self.colorPanel = ColorDisplay(self.colorView)
         layout.addWidget(self.colorPanel)

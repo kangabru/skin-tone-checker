@@ -3,7 +3,6 @@ from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainte
 from PyQt5.QtWidgets import QWidget
 from typing import List, Tuple
 
-
 class ColorDisplay(QWidget):
 
     colorChanged = pyqtSignal(QColor)
@@ -95,7 +94,6 @@ class ColorDisplay(QWidget):
         self._pointerPos = QPoint(x, y)
 
         self.update()
-
 
     def _createSkinToneIndicator(self, painter: QPainter):
         # Paint the ideal skin tone line
