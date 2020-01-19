@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal
 from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainterPath, QBrush
 from PyQt5.QtWidgets import QWidget
+from typing import List, Tuple
 
 
 class ColorDisplay(QWidget):
@@ -97,47 +98,22 @@ class ColorDisplay(QWidget):
 
 
     def _createSkinToneIndicator(self, painter: QPainter):
+        # Paint the ideal skin tone line
+        points = [(20, 90),(52, 85),(20, 40),(71, 20)]
+        painter.setPen(QPen(Qt.yellow, 4, Qt.DashLine, Qt.RoundCap))
+        painter.drawPath(self._getCubicPath(points))
+
+    def _getCubicPath(self, points: List[Tuple[int, int]]):
+        """Returns a path to draw using the given color percentage points.
+        Points should be a list of 4 tuples representing four (Saturation, Brightness) values as percentages.
+        FYI the plot displays saturation left to right, and brightness top to bottom.
+        """
         w, h = self.width(), self.height()
-
-        # (Saturation, Brightness) as percentage
-        points = [
-            (20, 58),
-            (20, 90),
-            (33, 85),
-            (37, 75),
-            (39, 51),
-            (52, 32),
-            (71, 20),
-        ]
-
         points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
-        painter.setPen(QPen(Qt.white, 2, Qt.DashDotLine))
+
         path = QPainterPath()
-
-        _x, _y = None, None
-        for x, y in points_xy:
-            if _x is not None:
-                path.lineTo(x, y)
-            path.moveTo(x, y)
-            _x, _y = x, y
-
-        painter.drawPath(path)
-
-        points = [
-            (20, 90),
-            (60, 85),
-            (20, 40),
-            (71, 20),
-        ]
-
-        points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
-        painter.setPen(QPen(Qt.yellow, 2, Qt.SolidLine))
-        path = QPainterPath()
-
-        x0, y0 = points_xy[0]
-        x1, y1 = points_xy[1]
-        x2, y2 = points_xy[2]
-        x3, y3 = points_xy[3]
+        x0, y0 = points_xy[0]; x1, y1 = points_xy[1]
+        x2, y2 = points_xy[2]; x3, y3 = points_xy[3]
         path.moveTo(x0, y0)
         path.cubicTo(x1, y1, x2, y2, x3, y3)
-        painter.drawPath(path)
+        return path
