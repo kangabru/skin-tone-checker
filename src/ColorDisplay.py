@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt, QPoint, pyqtSignal
 from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainterPath, QBrush
 from PyQt5.QtWidgets import QWidget
 from typing import List, Tuple
+from src.SkinToneHelper import PERFECT_TONES_CUBIC_POINTS
 
 class ColorDisplay(QWidget):
 
@@ -97,9 +98,8 @@ class ColorDisplay(QWidget):
 
     def _createSkinToneIndicator(self, painter: QPainter):
         # Paint the ideal skin tone line
-        points = [(20, 90),(52, 85),(20, 40),(71, 20)]
         painter.setPen(QPen(Qt.yellow, 4, Qt.DashLine, Qt.RoundCap))
-        painter.drawPath(self._getCubicPath(points))
+        painter.drawPath(self._getCubicPath(PERFECT_TONES_CUBIC_POINTS))
 
     def _getCubicPath(self, points: List[Tuple[int, int]]):
         """Returns a path to draw using the given color percentage points.

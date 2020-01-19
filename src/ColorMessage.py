@@ -6,7 +6,7 @@ class ColorMessage(QLabel):
     def __init__(self):
         super(ColorMessage, self).__init__()
         self.setObjectName('picker_message')
-        self.setText("Test")
+        self.setText("Click and drag anywhere to select colors.")
 
     def updateMessage(self, color):
         color = QColor(color)
