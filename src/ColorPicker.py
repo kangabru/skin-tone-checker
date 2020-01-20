@@ -1,39 +1,45 @@
 from PyQt5.QtCore import QByteArray, Qt, QRectF, QLineF, pyqtSignal, QSize
 from PyQt5.QtGui import QFontDatabase, QFont, QPainter, QPainterPath, QColor, QPen, QIcon
 from PyQt5.QtWidgets import QPushButton, QApplication, QWidget
+from threading import Timer
+
+_ICON_SIZE = 35
+_MARKER_SIZE = 50
+_WATCH_TIMEOUT = 0.1 # Seconds
 
 
 class MarkerWindow(QWidget):
-    size = 50
-
     def __init__(self, *args, **kwargs):
         super(MarkerWindow, self).__init__(*args, **kwargs)
-        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint
-                            | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
-        self.setFixedSize(self.size, self.size)
+        self.setFixedSize(_MARKER_SIZE, _MARKER_SIZE)
         self.move(1, 1)
         self.hide()
 
     def move(self, x, y):
-        super().move(x - self.size / 2, y - self.size/2)
+        super().move(x - _MARKER_SIZE / 2, y - _MARKER_SIZE / 2)
 
     def paintEvent(self, event):
         super().paintEvent(event)
+        size, mid = _MARKER_SIZE, _MARKER_SIZE / 2
+
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
+
+        # Clip
         path = QPainterPath()
-        radius = min(self.width(), self.height()) / 2
-        path.addRoundedRect(QRectF(self.rect()), radius, radius)
+        path.addRoundedRect(QRectF(self.rect()), mid, mid)
         painter.setClipPath(path)
 
-        painter.setPen(QPen(QColor(0, 174, 255), 3))
-        hw = self.width() / 2
-        hh = self.height() / 2
-        painter.drawLines(QLineF(hw, 0, hw, self.height()),
-                          QLineF(0, hh, self.width(), hh))
-        painter.setPen(QPen(Qt.white, 3))
-        painter.drawRoundedRect(self.rect(), radius, radius)
+        # Draw cross hairs
+        marker_color = QColor(0, 174, 255)
+        painter.setPen(QPen(marker_color, 4))
+        painter.drawLines(QLineF(mid, 0, mid, size), QLineF(0, mid, size, mid))
+
+        # Draw outline
+        painter.setPen(QPen(marker_color, 8))
+        painter.drawRoundedRect(self.rect(), mid, mid)
 
 
 class ColorPicker(QPushButton):
@@ -42,16 +48,18 @@ class ColorPicker(QPushButton):
 
     def __init__(self):
         super(ColorPicker, self).__init__()
-        self.setIconSize(QSize(35, 35))
+        self.setIconSize(QSize(_ICON_SIZE, _ICON_SIZE))
         self._setIcon()
         self._marker: QWidget = MarkerWindow()
 
         self._marker.show()
         self._marker.hide()
         self._isWatching = False
+        self._timer = None
 
     def closeEvent(self, event):
         self._marker.close()
+        self._stopWatching()
         super().closeEvent(event)
 
     def _setIcon(self, alt=False):
@@ -65,9 +73,11 @@ class ColorPicker(QPushButton):
             self.setCursor(Qt.CrossCursor)
             self._setIcon(True)
             self._marker.show()
+            self._startWatching()
         else:
             self._setIcon()
             self._marker.hide()
+            self._stopWatching()
 
     def mouseReleaseEvent(self, event):
         super(ColorPicker, self).mouseReleaseEvent(event)
@@ -77,21 +87,36 @@ class ColorPicker(QPushButton):
             self._setIcon()
 
     def mouseMoveEvent(self, event):
-        # getAverageColor(event, self.colorChanged.emit)
         pos = event.globalPos()
         self._marker.move(pos.x(), pos.y())
 
+    def isWatching(self) -> bool:
+        return self._isWatching
 
-def getAverageColor(event, emit=None):
+    def _startWatching(self):
+        self._timer = Timer(_WATCH_TIMEOUT, self._watch)
+        self._timer.start()
+
+    def _stopWatching(self):
+        self._isWatching = False
+        self._timer and self._timer.cancel()
+
+    def _watch(self):
+        if self._isWatching:
+            x, y = self._marker.pos().x(), self._marker.pos().y()
+            getAverageColorFromPosition(x, y, self.colorChanged.emit)
+            self._startWatching()
+
+
+def getAverageColor(event, emit):
     pos = event.globalPos()
+    getAverageColorFromPosition(pos.x(), pos.y(), emit)
+
+def getAverageColorFromPosition(x, y, emit):
     image = QApplication.primaryScreen().grabWindow(
         int(QApplication.desktop().winId()),
-        pos.x() - 6,
-        pos.y() - 6, 13, 13).toImage()
-    color = _getAverageColorFromImage(image)
-    if emit and color.isValid():
-        emit(color)
-
+        x - 6, y - 6, 13, 13).toImage()
+    emit(_getAverageColorFromImage(image))
 
 def _getAverageColorFromImage(image):
     width, height = image.width(), image.height()

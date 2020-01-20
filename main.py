@@ -83,6 +83,10 @@ class App(QDialog):
         self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        self.colorPicker.close()
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
