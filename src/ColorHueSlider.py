@@ -3,6 +3,7 @@ from PyQt5.QtGui import QLinearGradient, QColor, QImage, QPainter, QPen, QBrush,
 from PyQt5.QtWidgets import QSlider, QStyleOptionSlider, QStyle
 from src.SkinToneHelper import HUE_TARGET
 from typing import List, Tuple
+from src.util import GetLinePath
 
 INDICATOR_WIDTH, INDICATOR_HEIGHT = 4, 5
 
@@ -49,16 +50,10 @@ class ColorHueSlider(QSlider):
 
         x_hue, h = HUE_TARGET / 360 * self.width(), self.height()
         i_w, i_h = INDICATOR_WIDTH, INDICATOR_HEIGHT
-        path_top = self._getLinePath([(x_hue - i_w, 0), (x_hue + i_w, 0), (x_hue, i_h)])
-        path_bot = self._getLinePath([(x_hue - i_w, h), (x_hue + i_w, h), (x_hue, h - i_h)])
+        path_top = GetLinePath([(x_hue - i_w, 0), (x_hue + i_w, 0), (x_hue, i_h)])
+        path_bot = GetLinePath([(x_hue - i_w, h), (x_hue + i_w, h), (x_hue, h - i_h)])
         painter.drawPath(path_top)
         painter.drawPath(path_bot)
-
-    def _getLinePath(self, points: List[Tuple[int, int]]):
-        path = QPainterPath()
-        path.moveTo(*points[0])
-        [path.lineTo(x, y) for x, y in points]
-        return path
 
     def gradientPixmap(self):
         h, o = self.height() - 2 * INDICATOR_HEIGHT, INDICATOR_HEIGHT

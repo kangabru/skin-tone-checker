@@ -3,6 +3,7 @@ from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainte
 from PyQt5.QtWidgets import QWidget
 from typing import List, Tuple
 from src.SkinToneHelper import PERFECT_TONES_CUBIC_POINTS
+from src.util import GetLinePath, GetCubicPath
 
 class ColorDisplay(QWidget):
 
@@ -12,8 +13,8 @@ class ColorDisplay(QWidget):
         super(ColorDisplay, self).__init__(*args, **kwargs)
         self._color = QColor(color)
         self._image = None
-        self._imagePointer = None       # 小圆环
-        self._pointerPos = None         # 小圆环位置
+        self._imagePointer = None
+        self._pointerPos = None
         self._createPointer()
 
     def reset(self):
@@ -108,10 +109,9 @@ class ColorDisplay(QWidget):
         """
         w, h = self.width(), self.height()
         points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
+        return GetCubicPath(points_xy)
 
-        path = QPainterPath()
-        x0, y0 = points_xy[0]; x1, y1 = points_xy[1]
-        x2, y2 = points_xy[2]; x3, y3 = points_xy[3]
-        path.moveTo(x0, y0)
-        path.cubicTo(x1, y1, x2, y2, x3, y3)
-        return path
+    def _getLinePath(self, points: List[Tuple[int, int]]):
+        w, h = self.width(), self.height()
+        points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
+        return GetLinePath(points_xy)

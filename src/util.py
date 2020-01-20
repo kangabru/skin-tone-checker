@@ -1,0 +1,21 @@
+from PyQt5.QtGui import QPainterPath
+from typing import List, Tuple
+
+
+def GetLinePath(points: List[Tuple[int, int]]):
+    """Returns a drawable line path representing. Points should be a list of tuples representing (x, y) pixel values."""
+    path = QPainterPath()
+    path.moveTo(*points[0])
+    [path.lineTo(x, y) for x, y in points]
+    return path
+
+def GetCubicPath(points: List[Tuple[int, int]]):
+    """Returns a drawable path representing a 4 point cubic curve. Points should be a list of 4 tuples representing four (x, y) pixel values."""
+    path = QPainterPath()
+    x0, y0 = points[0]
+    x1, y1 = points[1]
+    x2, y2 = points[2]
+    x3, y3 = points[3]
+    path.moveTo(x0, y0)
+    path.cubicTo(x1, y1, x2, y2, x3, y3)
+    return path
