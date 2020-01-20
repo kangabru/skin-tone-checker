@@ -7,6 +7,7 @@ class ColorCircle(QWidget):
     def __init__(self, color=Qt.red):
         super(ColorCircle, self).__init__()
         self._color = QColor(color)
+        self.setToolTip("Displays the current picked colour.")
 
     def updateColor(self, color):
         self._color = QColor(color)

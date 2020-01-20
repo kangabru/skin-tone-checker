@@ -8,6 +8,7 @@ class ColorStats(QLabel):
         super().__init__()
         self.setAlignment(Qt.AlignCenter)
         self._setMessage("#ff0000", 0, 100, 100)
+        self.setToolTip("Displays the picked colour hex code, hue, saturation, and brightness values respectively.")
 
     def updateMessage(self, color):
         color = QColor(color)

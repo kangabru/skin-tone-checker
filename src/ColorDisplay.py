@@ -15,6 +15,7 @@ class ColorDisplay(QWidget):
         self._pointerPos = None
         self._createPointer()
         self._createDebugProximityMap()
+        self.setToolTip("Displays the saturation and brightness of the picked colour. The dashed line indicates the ideal skin tone range.")
 
     def _createPointer(self):
         self._imagePointer = QImage(12, 12, QImage.Format_ARGB32)

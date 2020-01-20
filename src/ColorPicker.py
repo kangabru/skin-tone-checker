@@ -19,6 +19,7 @@ class ColorPicker(QPushButton):
         self._marker: QWidget = MarkerWindow()
         self._isWatching = False
         self._timer = None
+        self.setToolTip("Click and drag to watch a specific area.")
 
     def closeEvent(self, event):
         self._marker.close()

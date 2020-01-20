@@ -12,6 +12,7 @@ class ColorHueSlider(QSlider):
         super().__init__(Qt.Horizontal, parent)
         self._hue = 0
         self._imageRainbow = self._getGradientPixmap()
+        self.setToolTip("Displays the hue of the picked colour. The ideal skin tone hue is marked by arrows.")
 
     def setHue(self, hue):
         self._hue = hue
