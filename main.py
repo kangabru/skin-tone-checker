@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QDialog, QWidget, QVBoxLayout, QHBoxLayout, QApplication, QDesktopWidget
 
 from src.ColorCircle import ColorCircle
@@ -18,6 +18,7 @@ class App(QDialog):
         super(App, self).__init__(*args, **kwargs)
         self.setWindowTitle("Skin Color Picker")
         self.setGeometry(-1, -1, 250, -1) # left, top, width, height
+        self.setWindowIcon(QIcon("icon/icon.png"))
 
         self.centerOnScreen()
         self.setStyleSheet(Stylesheet)
