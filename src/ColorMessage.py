@@ -1,7 +1,8 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QColor
-from src.SkinToneHelper import getSkinToneMessage
+from src.SkinToneHelper import getSkinToneMessage, ErrorLevel
+
 
 class ColorStats(QLabel):
     def __init__(self):
@@ -27,6 +28,7 @@ class ColorMessage(QLabel):
 
     def updateMessage(self, color):
         color = QColor(color)
-        success, message = getSkinToneMessage(color)
-        self.setStyleSheet("color: %s;" % "blue" if success else "black")
+        level, message = getSkinToneMessage(color)
+        color = "blue" if level == ErrorLevel.good else "green" if level == ErrorLevel.ok else "black"
+        self.setStyleSheet("color: %s;" % color)
         self.setText(message)

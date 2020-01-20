@@ -2,15 +2,20 @@ from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtGui import QColor, QImage, QPainter, QBrush, QPen
 from src.util import GetLinePath
 from enum import Enum, auto
+from typing import Tuple
 
-from enum import Enum
+
+class ErrorLevel(Enum):
+    good = auto()
+    ok = auto()
+    bad = auto()
+
 class _SaturationResult(Enum):
     good = auto()
     low_limit_1 = auto()
     low_limit_2 = auto()
     high_limit_1 = auto()
     high_limit_2 = auto()
-
 
 HUE_TARGET = 20
 
@@ -20,33 +25,34 @@ PERFECT_TONES_CUBIC_POINTS = [(20, 90),(52, 85),(20, 40),(71, 20)]
 # Represents the lines that define perfect skin tones. Values are (Saturation, Brightness) in percentages.
 DEBUG_PERFECT_TONES_POINTS = True
 PERFECT_TONES_POINTS = [(20, 90),(33, 85),(37, 75),(39, 51),(52, 32),(71, 20)]
-# PERFECT_TONES_POINTS = [(30, 70),(70, 30)]
 
 _LIMIT_HUE_1, _LIMIT_HUE_2 = 10, 20
 _LIMIT_BRIGHT_1, _LIMIT_BRIGHT_2 = 5, 10
 _LIMIT_SAT_1, _LIMIT_SAT_2 = 10, 20
 
-def getSkinToneMessage(color: QColor):
-    error = lambda m: (False, m + " ✘")
-    success = lambda m: (True, m + " ✔")
+
+def getSkinToneMessage(color: QColor) -> Tuple[ErrorLevel, str]:
+    error, ok, success = lambda m: (ErrorLevel.bad, m + " ✘"), lambda m: (
+        ErrorLevel.ok, m), lambda m: (ErrorLevel.good, m + " ✔")
+
     hue, sat, bright, _ = color.getHsv()
     sat, bright = sat / 2.55, bright / 2.55 # Convert to percentage
 
     hue_diff = _getHueDiff(hue)
     if hue_diff > _LIMIT_HUE_2: return error("The hue is off")
-    if hue_diff > _LIMIT_HUE_1: return error("The hue is off a little")
+    if hue_diff > _LIMIT_HUE_1: return ok("The hue is off a little")
 
     bright_diff = _getBrightDiff(bright)
     if bright_diff < -_LIMIT_BRIGHT_2: return error("The brightness is low")
-    if bright_diff < -_LIMIT_BRIGHT_1: return error("The brightness is a little low")
+    if bright_diff < -_LIMIT_BRIGHT_1: return ok("The brightness is a little low")
     if bright_diff > _LIMIT_BRIGHT_2: return error("The brightness is high")
-    if bright_diff > _LIMIT_BRIGHT_1: return error("The brightness is a little high")
+    if bright_diff > _LIMIT_BRIGHT_1: return ok("The brightness is a little high")
 
     sat_result = _getSatResult(sat, bright)
     if sat_result == _SaturationResult.low_limit_2: return error("The saturation is low")
-    if sat_result == _SaturationResult.low_limit_1: return error("The saturation is a little low")
+    if sat_result == _SaturationResult.low_limit_1: return ok("The saturation is a little low")
     if sat_result == _SaturationResult.high_limit_2: return error("The saturation is high")
-    if sat_result == _SaturationResult.high_limit_1: return error("The saturation is a little high")
+    if sat_result == _SaturationResult.high_limit_1: return ok("The saturation is a little high")
 
     return success("The skin tone is perfect")
 
