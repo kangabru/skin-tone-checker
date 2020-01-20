@@ -15,7 +15,6 @@ ColorCircle {
 }
 ColorPicker {
     border: none;
-    font-size: 25px;
     border-radius: 0px;
 }
 ColorHueSlider {
