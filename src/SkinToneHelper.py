@@ -4,31 +4,25 @@ from src.util import GetLinePath
 from enum import Enum, auto
 from typing import Tuple
 
+HUE_TARGET = 20
+
+# Represents the cubic curve that defines perfect skin tones. Values are (Saturation, Brightness) in percentages.
+PERFECT_TONES_CUBIC_POINTS = [(20, 90), (52, 85), (20, 40), (71, 20)]
+
+# Represents the lines that define perfect skin tones. Values are (Saturation, Brightness) in percentages.
+DEBUG_PERFECT_TONES_POINTS = False
+PERFECT_TONES_POINTS = [(20, 90), (33, 85), (37, 75), (39, 51), (52, 32), (71, 20)]
+
+# Limits to define when the value is good, ok, or bad
+_LIMIT_HUE_1, _LIMIT_HUE_2 = 10, 20
+_LIMIT_BRIGHT_1, _LIMIT_BRIGHT_2 = 5, 10
+_LIMIT_SAT_1, _LIMIT_SAT_2 = 10, 20
+
 
 class ErrorLevel(Enum):
     good = auto()
     ok = auto()
     bad = auto()
-
-class _SaturationResult(Enum):
-    good = auto()
-    low_limit_1 = auto()
-    low_limit_2 = auto()
-    high_limit_1 = auto()
-    high_limit_2 = auto()
-
-HUE_TARGET = 20
-
-# Represents the cubic curve that defines perfect skin tones. Values are (Saturation, Brightness) in percentages.
-PERFECT_TONES_CUBIC_POINTS = [(20, 90),(52, 85),(20, 40),(71, 20)]
-
-# Represents the lines that define perfect skin tones. Values are (Saturation, Brightness) in percentages.
-DEBUG_PERFECT_TONES_POINTS = True
-PERFECT_TONES_POINTS = [(20, 90),(33, 85),(37, 75),(39, 51),(52, 32),(71, 20)]
-
-_LIMIT_HUE_1, _LIMIT_HUE_2 = 10, 20
-_LIMIT_BRIGHT_1, _LIMIT_BRIGHT_2 = 5, 10
-_LIMIT_SAT_1, _LIMIT_SAT_2 = 10, 20
 
 
 def getSkinToneMessage(color: QColor) -> Tuple[ErrorLevel, str]:
@@ -36,7 +30,7 @@ def getSkinToneMessage(color: QColor) -> Tuple[ErrorLevel, str]:
         ErrorLevel.ok, m), lambda m: (ErrorLevel.good, m + " ✔")
 
     hue, sat, bright, _ = color.getHsv()
-    sat, bright = sat / 2.55, bright / 2.55 # Convert to percentage
+    sat, bright = sat / 2.55, bright / 2.55  # Convert to percentage
 
     hue_diff = _getHueDiff(hue)
     if hue_diff > _LIMIT_HUE_2: return error("The hue is off")
@@ -62,21 +56,30 @@ def _getHueDiff(hue):
     if hue_diff > 180: hue_diff = abs(hue_diff - 360)
     return hue_diff
 
+
 def _getBrightDiff(bright):
     first, last = PERFECT_TONES_POINTS[0][1], PERFECT_TONES_POINTS[-1][1]
     bright_min, bright_max = min(first, last), max(first, last)
-    if bright < bright_min: return bright - bright_min # Negative number
-    if bright > bright_max: return bright - bright_max # Positive number
+    if bright < bright_min: return bright - bright_min  # Negative number
+    if bright > bright_max: return bright - bright_max  # Positive number
     return 0
+
+
+class _SaturationResult(Enum):
+    good = auto()
+    low_limit_1 = auto()
+    low_limit_2 = auto()
+    high_limit_1 = auto()
+    high_limit_2 = auto()
+
 
 def _getSatResult(sat, bright) -> _SaturationResult:
     color_good = QColor.fromHsv(0, 0, 255)  # White
     color_bad = QColor.fromHsv(0, 0, 0)  # Black
 
-    proximity_map = _getColorMapImage()
-    colorAtPosition: QColor = proximity_map.pixelColor(sat, bright)
-    brightness = colorAtPosition.getHsvF()[2] # Return 0.0, 0.5, 1.0 to represent bad, ok, good respectively
-    isLow = _isInLowZone(sat, bright) # Left or right of the curve
+    colorAtPosition: QColor = PROXIMITY_MAP.pixelColor(sat, bright)
+    brightness = colorAtPosition.getHsvF()[2]  # Return 0.0, 0.5, 1.0 to represent bad, ok, good respectively
+    isLow = _isInLowZone(sat, bright)  # Left or right of the curve
 
     if brightness < 0.2 and isLow: return _SaturationResult.low_limit_2
     if brightness < 0.8 and isLow: return _SaturationResult.low_limit_1
@@ -85,19 +88,19 @@ def _getSatResult(sat, bright) -> _SaturationResult:
     return _SaturationResult.good
 
 
-def _getColorMapImage():
+def _getColorMapImage() -> QImage:
     """Returns a 100x100 px image grayscale image representing the saturation boundaries."""
-    color_bad, color_limit, color_good = Qt.black, _getColorB(50), Qt.white
+    color_bad, color_limit, color_good = _getColorB(0), _getColorB(50), _getColorB(100)
 
-    proximity_map = QImage(100, 100, QImage.Format_Grayscale8)
+    proximity_map = QImage(100, 100, QImage.Format_ARGB32)
     painter = QPainter()
     painter.begin(proximity_map)
 
     # Paint limits
-    painter.fillRect(QRect(0, 0, 100, 100), QBrush(color_bad)) # Bad zone
+    painter.fillRect(QRect(0, 0, 100, 100), QBrush(color_bad))  # Bad zone
 
     painter.setPen(QPen(color_limit, _LIMIT_SAT_2))
-    painter.drawPath(GetLinePath(PERFECT_TONES_POINTS)) # Limit 2 zone
+    painter.drawPath(GetLinePath(PERFECT_TONES_POINTS))  # Limit 2 zone
 
     painter.setPen(QPen(color_good, _LIMIT_SAT_1))
     painter.drawPath(GetLinePath(PERFECT_TONES_POINTS))  # Limit 1 zone (good zone)
@@ -105,8 +108,10 @@ def _getColorMapImage():
 
     return proximity_map
 
-def _getColorB(brightness) -> QColor:
-    return QColor.fromHsvF(0, 0, brightness/100)
+
+def _getColorB(transparency) -> QColor:
+    return QColor.fromHsvF(0, 0, transparency / 100)
+
 
 def _isInLowZone(sat, bright):
     # Top and bottom out of region edge cases
@@ -122,11 +127,14 @@ def _isInLowZone(sat, bright):
         # Check if this segment is the one we will compare
         bright0, bright1 = point0[1], point1[1]
         bright_min, bright_max = min(bright0, bright1), max(bright0, bright1)
-        if bright >= bright_min and bright <= bright_max: break # yes it is
+        if bright >= bright_min and bright <= bright_max: break  # yes it is
 
     # Get the saturation point on the line segment given the input brightness
     sat0, bright0 = point0; sat1, bright1 = point1
     bright_mult = (bright - bright0) / (bright1 - bright0)
     sat_point = sat0 + (sat1 - sat0) * bright_mult
 
-    return sat < sat_point # Simply see if it's left or right of the line
+    return sat < sat_point  # Simply see if it's left or right of the line
+
+
+PROXIMITY_MAP: QImage = _getColorMapImage()
