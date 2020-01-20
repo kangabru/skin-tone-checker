@@ -2,6 +2,7 @@ from PyQt5.QtCore import QByteArray, Qt, QRectF, QLineF, pyqtSignal, QSize
 from PyQt5.QtGui import QFontDatabase, QFont, QPainter, QPainterPath, QColor, QPen, QIcon
 from PyQt5.QtWidgets import QPushButton, QApplication, QWidget
 from threading import Timer
+from typing import Callable
 
 _ICON_SIZE = 35
 _MARKER_SIZE = 50
@@ -10,8 +11,9 @@ _WATCH_TIMEOUT = 0.1 # Seconds
 class ColorPicker(QPushButton):
     colorChanged = pyqtSignal(QColor)
 
-    def __init__(self):
+    def __init__(self, forceWindowOnTop: Callable[[bool], None]):
         super().__init__()
+        self._forceWindowOnTop = forceWindowOnTop
         self.setIconSize(QSize(_ICON_SIZE, _ICON_SIZE))
         self._setIcon()
         self._marker: QWidget = MarkerWindow()
@@ -44,7 +46,9 @@ class ColorPicker(QPushButton):
         super().mouseReleaseEvent(event)
         self.setCursor(Qt.ArrowCursor)
 
-        if not self._isWatching:
+        if self._isWatching:
+            self._forceWindowOnTop(True)
+        else:
             self._setIcon()
 
     def mouseMoveEvent(self, event):
@@ -61,6 +65,7 @@ class ColorPicker(QPushButton):
     def _stopWatching(self):
         self._isWatching = False
         self._timer and self._timer.cancel()
+        self._forceWindowOnTop(False)
 
     def _watch(self):
         if self._isWatching:

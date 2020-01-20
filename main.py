@@ -43,7 +43,7 @@ class App(QDialog):
         vlayout.addWidget(color_tools)
         hlayout = QHBoxLayout(color_tools)
 
-        self.colorPicker = ColorPicker()
+        self.colorPicker = ColorPicker(self._forceWindowOnTop)
         hlayout.addWidget(self.colorPicker)
 
         self.colorCircle = ColorCircle()
@@ -86,6 +86,11 @@ class App(QDialog):
     def closeEvent(self, event):
         super().closeEvent(event)
         self.colorPicker.close()
+
+    def _forceWindowOnTop(self, windowOnTop: bool):
+        self.setWindowFlag(Qt.WindowStaysOnTopHint, windowOnTop)
+        self.show()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
