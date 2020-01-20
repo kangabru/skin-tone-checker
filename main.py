@@ -73,6 +73,8 @@ class App(QDialog):
         func(self.stats.updateMessage)
 
     def mousePressEvent(self, event):
+        self.colorPicker.stopWatching()
+        
         if event.button() == Qt.RightButton:
             self._toggleWindowOnTop()
         else:

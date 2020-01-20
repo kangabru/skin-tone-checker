@@ -26,7 +26,7 @@ class ColorPicker(QPushButton):
 
     def closeEvent(self, event):
         self._marker.close()
-        self._stopWatching()
+        self.stopWatching()
         super().closeEvent(event)
 
     def _setIcon(self, alt=False):
@@ -35,16 +35,7 @@ class ColorPicker(QPushButton):
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         self._isWatching = not self._isWatching
-
-        if self._isWatching:
-            self.setCursor(Qt.CrossCursor)
-            self._setIcon(True)
-            self._marker.show()
-            self._startWatching()
-        else:
-            self._setIcon()
-            self._marker.hide()
-            self._stopWatching()
+        self._startWatching() if self._isWatching else self.stopWatching()
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
@@ -64,10 +55,15 @@ class ColorPicker(QPushButton):
         return self._isWatching
 
     def _startWatching(self):
+        self.setCursor(Qt.CrossCursor)
+        self._setIcon(True)
+        self._marker.show()
         self._timer = Timer(_WATCH_TIMEOUT, self._watch)
         self._timer.start()
 
-    def _stopWatching(self):
+    def stopWatching(self):
+        self._setIcon()
+        self._marker.hide()
         self._isWatching = False
         self._timer and self._timer.cancel()
         self._setWindowOnTop(self._wasWindowOnTop)
