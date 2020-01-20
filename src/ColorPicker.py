@@ -81,11 +81,11 @@ def getAverageColor(event, emit=None):
     image = QApplication.primaryScreen().grabWindow(
         int(QApplication.desktop().winId()),
         pos.x() - 6, pos.y() - 6, 13, 13).toImage()
-    color = _getAvergaeColorFromImage(image)
+    color = _getAverageColorFromImage(image)
     if emit and color.isValid():
         emit(color)
 
-def _getAvergaeColorFromImage(image):
+def _getAverageColorFromImage(image):
     width, height = image.width(), image.height()
     r, g, b, count = 0, 0, 0, 0
 

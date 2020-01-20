@@ -19,3 +19,9 @@ def GetCubicPath(points: List[Tuple[int, int]]):
     path.moveTo(x0, y0)
     path.cubicTo(x1, y1, x2, y2, x3, y3)
     return path
+
+def HueColorsToPixels(points: List[Tuple[int, int]], width: int, height: int):
+    return [HueColorToPixel(p, width, height) for p in points]
+
+def HueColorToPixel(point: Tuple[int, int], width: int, height: int):
+    return (point[0] / 100 * width, height - (point[1] / 100 * height))

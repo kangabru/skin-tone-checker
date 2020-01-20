@@ -51,11 +51,11 @@ class App(QDialog):
         self.hueIndicator = ColorHueSlider()
         hlayout.addWidget(self.hueIndicator)
 
-        self.stats = ColorStats()
-        vlayout.addWidget(self.stats)
-
         self.message = ColorMessage()
         vlayout.addWidget(self.message)
+
+        self.stats = ColorStats()
+        vlayout.addWidget(self.stats)
 
     def initSignals(self):
         self._connectColorUpdates(self.colorPicker.colorChanged.connect)

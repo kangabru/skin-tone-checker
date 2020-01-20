@@ -2,8 +2,9 @@ from PyQt5.QtCore import Qt, QPoint, pyqtSignal
 from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainterPath, QBrush
 from PyQt5.QtWidgets import QWidget
 from typing import List, Tuple
-from src.SkinToneHelper import PERFECT_TONES_CUBIC_POINTS
-from src.util import GetLinePath, GetCubicPath
+from src.SkinToneHelper import PERFECT_TONES_CUBIC_POINTS, PERFECT_TONES_POINTS, DEBUG_PERFECT_TONES_POINTS
+from src.util import GetLinePath, GetCubicPath, HueColorsToPixels
+
 
 class ColorDisplay(QWidget):
 
@@ -102,16 +103,18 @@ class ColorDisplay(QWidget):
         painter.setPen(QPen(Qt.yellow, 4, Qt.DashLine, Qt.RoundCap))
         painter.drawPath(self._getCubicPath(PERFECT_TONES_CUBIC_POINTS))
 
+        if DEBUG_PERFECT_TONES_POINTS:  # Draw internal indicators for debugging purposes
+            painter.setPen(QPen(Qt.white, 2, Qt.DashLine, Qt.RoundCap))
+            painter.drawPath(self._getLinePath(PERFECT_TONES_POINTS))
+
     def _getCubicPath(self, points: List[Tuple[int, int]]):
         """Returns a path to draw using the given color percentage points.
         Points should be a list of 4 tuples representing four (Saturation, Brightness) values as percentages.
         FYI the plot displays saturation left to right, and brightness top to bottom.
         """
-        w, h = self.width(), self.height()
-        points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
+        points_xy = HueColorsToPixels(points, self.width(), self.height())
         return GetCubicPath(points_xy)
 
     def _getLinePath(self, points: List[Tuple[int, int]]):
-        w, h = self.width(), self.height()
-        points_xy = [(p[0] / 100 * w, h - (p[1] / 100 * h)) for p in points]
+        points_xy = HueColorsToPixels(points, self.width(), self.height())
         return GetLinePath(points_xy)
