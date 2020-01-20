@@ -1,7 +1,9 @@
 Stylesheet = """
 App {
     background: white;
-    margin: 50px;
+}
+#border {
+    border: 6px solid #aaa;
 }
 ColorDisplay {
     min-height: 160px;

@@ -9,6 +9,7 @@ from src.ColorHueSlider import ColorHueSlider
 from src.ColorPicker import ColorPicker, getAverageColor
 from src.ColorMessage import ColorMessage, ColorStats
 from src.styles import Stylesheet
+from src.util import UpdateObjectName
 
 class App(QDialog):
 
@@ -19,7 +20,9 @@ class App(QDialog):
         self.setWindowTitle("Skin Color Picker")
         self.setGeometry(-1, -1, 250, -1) # left, top, width, height
         self.setWindowIcon(QIcon("icon/icon.png"))
+        self.setToolTip("Right click to toggle whether to fix the app above other windows.")
 
+        self._windowOnTop = False
         self.centerOnScreen()
         self.setStyleSheet(Stylesheet)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
@@ -30,11 +33,11 @@ class App(QDialog):
 
     def initUi(self):
         vlayout = QVBoxLayout(self)
-        colorView = QWidget(self)
-        vlayout.addWidget(colorView)
+        content = QWidget(self)
+        vlayout.addWidget(content)
 
-        vlayout = QVBoxLayout(colorView)
-        vlayout.setContentsMargins(1, 1, 1, 1)
+        vlayout = QVBoxLayout(content)
+        vlayout.setContentsMargins(0,0,0,0)
 
         self.colorDisplay = ColorDisplay()
         vlayout.addWidget(self.colorDisplay)
@@ -43,7 +46,7 @@ class App(QDialog):
         vlayout.addWidget(color_tools)
         hlayout = QHBoxLayout(color_tools)
 
-        self.colorPicker = ColorPicker(self._forceWindowOnTop)
+        self.colorPicker = ColorPicker(self._getWindowOnTop, self._setWindowOnTop)
         hlayout.addWidget(self.colorPicker)
 
         self.colorCircle = ColorCircle()
@@ -70,7 +73,10 @@ class App(QDialog):
         func(self.stats.updateMessage)
 
     def mousePressEvent(self, event):
-        self.setCursor(Qt.CrossCursor)
+        if event.button() == Qt.RightButton:
+            self._toggleWindowOnTop()
+        else:
+            self.setCursor(Qt.CrossCursor)
 
     def mouseReleaseEvent(self, event):
         self.setCursor(Qt.ArrowCursor)
@@ -87,9 +93,17 @@ class App(QDialog):
         super().closeEvent(event)
         self.colorPicker.close()
 
-    def _forceWindowOnTop(self, windowOnTop: bool):
+    def _toggleWindowOnTop(self):
+        self._setWindowOnTop(not self._windowOnTop)
+
+    def _getWindowOnTop(self):
+        return self._windowOnTop
+
+    def _setWindowOnTop(self, windowOnTop):
+        self._windowOnTop = windowOnTop
         self.setWindowFlag(Qt.WindowStaysOnTopHint, windowOnTop)
         self.show()
+        UpdateObjectName(self.style(), self, "border" if windowOnTop else "")
 
 
 if __name__ == '__main__':

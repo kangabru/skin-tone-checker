@@ -1,4 +1,6 @@
 from PyQt5.QtGui import QPainter, QPainterPath
+from PyQt5.QtWidgets import QApplication, QWidget, QStyle
+
 from typing import List, Tuple
 
 def GetLinePath(points: List[Tuple[int, int]]):
@@ -28,3 +30,8 @@ def HueColorToPixel(point: Tuple[int, int], width: int, height: int):
 def SmoothPainter(painter):
     painter.setRenderHint(QPainter.Antialiasing, True)
     painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+
+def UpdateObjectName(style: QStyle, widget: QWidget, objectName: str):
+    widget.setObjectName(objectName)
+    style.unpolish(widget)
+    style.polish(widget)

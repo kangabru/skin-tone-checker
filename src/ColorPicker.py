@@ -11,9 +11,12 @@ _WATCH_TIMEOUT = 0.1 # Seconds
 class ColorPicker(QPushButton):
     colorChanged = pyqtSignal(QColor)
 
-    def __init__(self, forceWindowOnTop: Callable[[bool], None]):
+    def __init__(self, getWindowOnTop: Callable[[], bool], setWindowOnTop: Callable[[bool], None]):
         super().__init__()
-        self._forceWindowOnTop = forceWindowOnTop
+        self._wasWindowOnTop = False
+        self._getWindowOnTop = getWindowOnTop
+        self._setWindowOnTop = setWindowOnTop
+
         self.setIconSize(QSize(_ICON_SIZE, _ICON_SIZE))
         self._setIcon()
         self._marker: QWidget = MarkerWindow()
@@ -48,7 +51,8 @@ class ColorPicker(QPushButton):
         self.setCursor(Qt.ArrowCursor)
 
         if self._isWatching:
-            self._forceWindowOnTop(True)
+            self._wasWindowOnTop = self._getWindowOnTop()
+            self._setWindowOnTop(True)
         else:
             self._setIcon()
 
@@ -66,7 +70,7 @@ class ColorPicker(QPushButton):
     def _stopWatching(self):
         self._isWatching = False
         self._timer and self._timer.cancel()
-        self._forceWindowOnTop(False)
+        self._setWindowOnTop(self._wasWindowOnTop)
 
     def _watch(self):
         if self._isWatching:
