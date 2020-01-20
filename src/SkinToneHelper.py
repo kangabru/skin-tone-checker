@@ -18,7 +18,6 @@ _LIMIT_HUE_1, _LIMIT_HUE_2 = 10, 20
 _LIMIT_BRIGHT_1, _LIMIT_BRIGHT_2 = 5, 10
 _LIMIT_SAT_1, _LIMIT_SAT_2 = 10, 20
 
-
 class ErrorLevel(Enum):
     good = auto()
     ok = auto()
@@ -50,12 +49,10 @@ def getSkinToneMessage(color: QColor) -> Tuple[ErrorLevel, str]:
 
     return success("The skin tone is perfect")
 
-
 def _getHueDiff(hue):
     hue_diff = abs(HUE_TARGET - hue) % 360
     if hue_diff > 180: hue_diff = abs(hue_diff - 360)
     return hue_diff
-
 
 def _getBrightDiff(bright):
     first, last = PERFECT_TONES_POINTS[0][1], PERFECT_TONES_POINTS[-1][1]
@@ -87,7 +84,6 @@ def _getSatResult(sat, bright) -> _SaturationResult:
     if brightness < 0.8 and not isLow: return _SaturationResult.high_limit_1
     return _SaturationResult.good
 
-
 def _getColorMapImage() -> QImage:
     """Returns a 100x100 px image grayscale image representing the saturation boundaries."""
     color_bad, color_limit, color_good = _getColorB(0), _getColorB(50), _getColorB(100)
@@ -108,10 +104,8 @@ def _getColorMapImage() -> QImage:
 
     return proximity_map
 
-
 def _getColorB(transparency) -> QColor:
     return QColor.fromHsvF(0, 0, transparency / 100)
-
 
 def _isInLowZone(sat, bright):
     # Top and bottom out of region edge cases
@@ -135,6 +129,5 @@ def _isInLowZone(sat, bright):
     sat_point = sat0 + (sat1 - sat0) * bright_mult
 
     return sat < sat_point  # Simply see if it's left or right of the line
-
 
 PROXIMITY_MAP: QImage = _getColorMapImage()

@@ -15,7 +15,7 @@ class App(QDialog):
     colorChanged = pyqtSignal(QColor)
 
     def __init__(self, *args, **kwargs):
-        super(App, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.setWindowTitle("Skin Color Picker")
         self.setGeometry(-1, -1, 250, -1) # left, top, width, height
         self.setWindowIcon(QIcon("icon/icon.png"))

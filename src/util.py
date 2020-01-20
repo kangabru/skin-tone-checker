@@ -1,6 +1,5 @@
-from PyQt5.QtGui import QPainterPath
+from PyQt5.QtGui import QPainter, QPainterPath
 from typing import List, Tuple
-
 
 def GetLinePath(points: List[Tuple[int, int]]):
     """Returns a drawable line path representing. Points should be a list of tuples representing (x, y) pixel values."""
@@ -25,3 +24,7 @@ def HueColorsToPixels(points: List[Tuple[int, int]], width: int, height: int):
 
 def HueColorToPixel(point: Tuple[int, int], width: int, height: int):
     return (point[0] / 100 * width, height - (point[1] / 100 * height))
+
+def SmoothPainter(painter):
+    painter.setRenderHint(QPainter.Antialiasing, True)
+    painter.setRenderHint(QPainter.SmoothPixmapTransform, True)

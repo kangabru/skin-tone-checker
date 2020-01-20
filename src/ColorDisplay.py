@@ -1,35 +1,27 @@
-from PyQt5.QtCore import Qt, QPoint, pyqtSignal
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QLinearGradient, QColor, QImage, QPen, QPainterPath, QBrush
 from PyQt5.QtWidgets import QWidget
 from typing import List, Tuple
 from src.SkinToneHelper import PERFECT_TONES_CUBIC_POINTS, PERFECT_TONES_POINTS, DEBUG_PERFECT_TONES_POINTS, PROXIMITY_MAP
 from src.util import GetLinePath, GetCubicPath, HueColorsToPixels
-
+from src.util import SmoothPainter
 
 class ColorDisplay(QWidget):
-
-    colorChanged = pyqtSignal(QColor)
-
     def __init__(self, *args, color=Qt.red, **kwargs):
-        super(ColorDisplay, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._color = QColor(color)
         self._image = None
         self._imagePointer = None
         self._pointerPos = None
         self._createPointer()
-        self._initProximityMap()
-
-    def _initProximityMap(self):
-        image = PROXIMITY_MAP.mirrored(False, True).scaled(self.width(), self.height())
-        self.proximityMap = image
+        self._createDebugProximityMap()
 
     def _createPointer(self):
         self._imagePointer = QImage(12, 12, QImage.Format_ARGB32)
         self._imagePointer.fill(Qt.transparent)
         painter = QPainter()
         painter.begin(self._imagePointer)
-        painter.setRenderHint(QPainter.Antialiasing, True)
-        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+        SmoothPainter(painter)
         painter.setPen(QPen(Qt.white, 2))
         painter.setBrush(Qt.NoBrush)
         path = QPainterPath()
@@ -38,12 +30,16 @@ class ColorDisplay(QWidget):
         painter.drawRoundedRect(0, 0, 12, 12, 6.0, 6.0)
         painter.end()
 
+    def _createDebugProximityMap(self):
+        image = PROXIMITY_MAP.mirrored(False, True) \
+                             .scaled(self.width(), self.height())
+        self.proximityMap = image
+
     def paintEvent(self, event):
-        super(ColorDisplay, self).paintEvent(event)
+        super().paintEvent(event)
         if self._image:
             painter = QPainter(self)
-            painter.setRenderHint(QPainter.Antialiasing, True)
-            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+            SmoothPainter(painter)
             painter.drawImage(self.rect(), self._image)
             painter.setPen(QColor(240, 240, 240))
             painter.drawRect(self.rect())
@@ -52,7 +48,7 @@ class ColorDisplay(QWidget):
                 painter.drawImage(self._pointerPos - QPoint(6, 6), self._imagePointer)
 
     def resizeEvent(self, event):
-        super(ColorDisplay, self).resizeEvent(event)
+        super().resizeEvent(event)
         self.updateColor(self._color)
 
     def updateColor(self, color):
@@ -65,8 +61,7 @@ class ColorDisplay(QWidget):
 
         painter = QPainter()
         painter.begin(self._image)
-        painter.setRenderHint(QPainter.Antialiasing, True)
-        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+        SmoothPainter(painter)
 
         # Render top right corner
         # Choose brightest, most saturated color for the given hue. Undefined hues (greys) should default to red hue.
@@ -93,7 +88,6 @@ class ColorDisplay(QWidget):
         _, s, v, _ = color.getHsvF()
         x, y = s * w, (1 - v) * h
         self._pointerPos = QPoint(x, y)
-
         self.update()
 
     def _createSkinToneIndicator(self, painter: QPainter):

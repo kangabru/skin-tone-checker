@@ -3,10 +3,9 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QColor
 from src.SkinToneHelper import getSkinToneMessage, ErrorLevel
 
-
 class ColorStats(QLabel):
     def __init__(self):
-        super(ColorStats, self).__init__()
+        super().__init__()
         self.setAlignment(Qt.AlignCenter)
         self._setMessage("#ff0000", 0, 100, 100)
 
@@ -19,10 +18,10 @@ class ColorStats(QLabel):
         message = "%s H:%.0f S:%.0f%s B:%.0f%s" % (hex, hue, sat, "%", bright, "%")
         self.setText(message)
 
-class ColorMessage(QLabel):
 
+class ColorMessage(QLabel):
     def __init__(self):
-        super(ColorMessage, self).__init__()
+        super().__init__()
         self.setAlignment(Qt.AlignCenter)
         self.setText("Click and drag anywhere to select colors.")
 

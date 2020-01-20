@@ -7,10 +7,71 @@ _ICON_SIZE = 35
 _MARKER_SIZE = 50
 _WATCH_TIMEOUT = 0.1 # Seconds
 
+class ColorPicker(QPushButton):
+    colorChanged = pyqtSignal(QColor)
+
+    def __init__(self):
+        super().__init__()
+        self.setIconSize(QSize(_ICON_SIZE, _ICON_SIZE))
+        self._setIcon()
+        self._marker: QWidget = MarkerWindow()
+        self._isWatching = False
+        self._timer = None
+
+    def closeEvent(self, event):
+        self._marker.close()
+        self._stopWatching()
+        super().closeEvent(event)
+
+    def _setIcon(self, alt=False):
+        self.setIcon(QIcon("icon/icon%s.png" % ("_alt" if alt else "")))
+
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self._isWatching = not self._isWatching
+
+        if self._isWatching:
+            self.setCursor(Qt.CrossCursor)
+            self._setIcon(True)
+            self._marker.show()
+            self._startWatching()
+        else:
+            self._setIcon()
+            self._marker.hide()
+            self._stopWatching()
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        self.setCursor(Qt.ArrowCursor)
+
+        if not self._isWatching:
+            self._setIcon()
+
+    def mouseMoveEvent(self, event):
+        pos = event.globalPos()
+        self._marker.move(pos.x(), pos.y())
+
+    def isWatching(self) -> bool:
+        return self._isWatching
+
+    def _startWatching(self):
+        self._timer = Timer(_WATCH_TIMEOUT, self._watch)
+        self._timer.start()
+
+    def _stopWatching(self):
+        self._isWatching = False
+        self._timer and self._timer.cancel()
+
+    def _watch(self):
+        if self._isWatching:
+            x, y = self._marker.pos().x(), self._marker.pos().y()
+            getAverageColorFromPosition(x, y, self.colorChanged.emit)
+            self._startWatching()
+
 
 class MarkerWindow(QWidget):
     def __init__(self, *args, **kwargs):
-        super(MarkerWindow, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setFixedSize(_MARKER_SIZE, _MARKER_SIZE)
@@ -40,72 +101,6 @@ class MarkerWindow(QWidget):
         # Draw outline
         painter.setPen(QPen(marker_color, 8))
         painter.drawRoundedRect(self.rect(), mid, mid)
-
-
-class ColorPicker(QPushButton):
-
-    colorChanged = pyqtSignal(QColor)
-
-    def __init__(self):
-        super(ColorPicker, self).__init__()
-        self.setIconSize(QSize(_ICON_SIZE, _ICON_SIZE))
-        self._setIcon()
-        self._marker: QWidget = MarkerWindow()
-
-        self._marker.show()
-        self._marker.hide()
-        self._isWatching = False
-        self._timer = None
-
-    def closeEvent(self, event):
-        self._marker.close()
-        self._stopWatching()
-        super().closeEvent(event)
-
-    def _setIcon(self, alt=False):
-        self.setIcon(QIcon("icon/icon%s.png" % ("_alt" if alt else "")))
-
-    def mousePressEvent(self, event):
-        super(ColorPicker, self).mousePressEvent(event)
-        self._isWatching = not self._isWatching
-
-        if self._isWatching:
-            self.setCursor(Qt.CrossCursor)
-            self._setIcon(True)
-            self._marker.show()
-            self._startWatching()
-        else:
-            self._setIcon()
-            self._marker.hide()
-            self._stopWatching()
-
-    def mouseReleaseEvent(self, event):
-        super(ColorPicker, self).mouseReleaseEvent(event)
-        self.setCursor(Qt.ArrowCursor)
-
-        if not self._isWatching:
-            self._setIcon()
-
-    def mouseMoveEvent(self, event):
-        pos = event.globalPos()
-        self._marker.move(pos.x(), pos.y())
-
-    def isWatching(self) -> bool:
-        return self._isWatching
-
-    def _startWatching(self):
-        self._timer = Timer(_WATCH_TIMEOUT, self._watch)
-        self._timer.start()
-
-    def _stopWatching(self):
-        self._isWatching = False
-        self._timer and self._timer.cancel()
-
-    def _watch(self):
-        if self._isWatching:
-            x, y = self._marker.pos().x(), self._marker.pos().y()
-            getAverageColorFromPosition(x, y, self.colorChanged.emit)
-            self._startWatching()
 
 
 def getAverageColor(event, emit):
