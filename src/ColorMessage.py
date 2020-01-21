@@ -16,6 +16,7 @@ class ColorStats(QLabel):
         self._setMessage(color.name(), h, s/2.55, v/2.55)
 
     def _setMessage(self, hex: str, hue: float, sat: float, bright: float):
+        hue = max(0, hue) # Gray values can be any hue but are marked as -1. Set to 0 instead.
         message = "%s H:%.0f S:%.0f%s B:%.0f%s" % (hex, hue, sat, "%", bright, "%")
         self.setText(message)
 

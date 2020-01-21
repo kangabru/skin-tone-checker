@@ -32,20 +32,20 @@ def getSkinToneMessage(color: QColor) -> Tuple[ErrorLevel, str]:
     sat, bright = sat / 2.55, bright / 2.55  # Convert to percentage
 
     hue_diff = _getHueDiff(hue)
-    if hue_diff > _LIMIT_HUE_2: return error("The hue is off")
-    if hue_diff > _LIMIT_HUE_1: return ok("The hue is off a little")
+    if hue_diff > _LIMIT_HUE_2: return error("The hue is off, adjust the tint.")
+    if hue_diff > _LIMIT_HUE_1: return ok("The hue is a little off, adjust the tint.")
 
     bright_diff = _getBrightDiff(bright)
-    if bright_diff < -_LIMIT_BRIGHT_2: return error("The brightness is low")
-    if bright_diff < -_LIMIT_BRIGHT_1: return ok("The brightness is a little low")
-    if bright_diff > _LIMIT_BRIGHT_2: return error("The brightness is high")
-    if bright_diff > _LIMIT_BRIGHT_1: return ok("The brightness is a little high")
+    if bright_diff < -_LIMIT_BRIGHT_2: return error("The brightness is low.")
+    if bright_diff < -_LIMIT_BRIGHT_1: return ok("The brightness is a little low.")
+    if bright_diff > _LIMIT_BRIGHT_2: return error("The brightness is high.")
+    if bright_diff > _LIMIT_BRIGHT_1: return ok("The brightness is a little high.")
 
     sat_result = _getSatResult(sat, bright)
-    if sat_result == _SaturationResult.low_limit_2: return error("The saturation is low")
-    if sat_result == _SaturationResult.low_limit_1: return ok("The saturation is a little low")
-    if sat_result == _SaturationResult.high_limit_2: return error("The saturation is high")
-    if sat_result == _SaturationResult.high_limit_1: return ok("The saturation is a little high")
+    if sat_result == _SaturationResult.low_limit_2: return error("The saturation is low.")
+    if sat_result == _SaturationResult.low_limit_1: return ok("The saturation is a little low.")
+    if sat_result == _SaturationResult.high_limit_2: return error("The saturation is high.")
+    if sat_result == _SaturationResult.high_limit_1: return ok("The saturation is a little high.")
 
     return success("The skin tone is perfect")
 
