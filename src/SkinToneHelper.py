@@ -89,8 +89,7 @@ def _getColorMapImage() -> QImage:
     color_bad, color_limit, color_good = _getColorB(0), _getColorB(50), _getColorB(100)
 
     proximity_map = QImage(100, 100, QImage.Format_ARGB32)
-    painter = QPainter()
-    painter.begin(proximity_map)
+    painter = QPainter(proximity_map)
 
     # Paint limits
     painter.fillRect(QRect(0, 0, 100, 100), QBrush(color_bad))  # Bad zone

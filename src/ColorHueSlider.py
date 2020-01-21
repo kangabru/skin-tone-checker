@@ -27,8 +27,7 @@ class ColorHueSlider(QSlider):
         return max(0, min(self.width(), x))
 
     def paintEvent(self, event):
-        painter = QPainter(self)
-        SmoothPainter(painter)
+        painter = SmoothPainter(self)
 
         raindow_rect = self.rect().adjusted(0, INDICATOR_HEIGHT, 0, -INDICATOR_HEIGHT)
         painter.drawImage(raindow_rect, self._imageRainbow)
@@ -58,8 +57,6 @@ class ColorHueSlider(QSlider):
         gradient.setColorAt(1, QColor('#ff0000'))
 
         image = QImage(self.width(), self.height(), QImage.Format_ARGB32)
-        painter = QPainter()
-        painter.begin(image)
-        SmoothPainter(painter)
+        painter = SmoothPainter(image)
         painter.fillRect(self.rect(), gradient)
         return image

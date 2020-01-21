@@ -27,9 +27,11 @@ def HueColorsToPixels(points: List[Tuple[int, int]], width: int, height: int):
 def HueColorToPixel(point: Tuple[int, int], width: int, height: int):
     return (point[0] / 100 * width, height - (point[1] / 100 * height))
 
-def SmoothPainter(painter):
+def SmoothPainter(*args):
+    painter = QPainter(*args)
     painter.setRenderHint(QPainter.Antialiasing, True)
     painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+    return painter
 
 def UpdateObjectName(style: QStyle, widget: QWidget, objectName: str):
     widget.setObjectName(objectName)

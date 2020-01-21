@@ -20,9 +20,7 @@ class ColorDisplay(QWidget):
     def _createPointer(self):
         self._imagePointer = QImage(12, 12, QImage.Format_ARGB32)
         self._imagePointer.fill(Qt.transparent)
-        painter = QPainter()
-        painter.begin(self._imagePointer)
-        SmoothPainter(painter)
+        painter = SmoothPainter(self._imagePointer)
         painter.setPen(QPen(Qt.white, 2))
         painter.setBrush(Qt.NoBrush)
         path = QPainterPath()
@@ -39,8 +37,7 @@ class ColorDisplay(QWidget):
     def paintEvent(self, event):
         super().paintEvent(event)
         if self._image:
-            painter = QPainter(self)
-            SmoothPainter(painter)
+            painter = SmoothPainter(self)
             painter.drawImage(self.rect(), self._image)
             painter.setPen(QColor(240, 240, 240))
             painter.drawRect(self.rect())
@@ -60,9 +57,7 @@ class ColorDisplay(QWidget):
         self._color = color
         self._image = QImage(self.size(), QImage.Format_ARGB32)
 
-        painter = QPainter()
-        painter.begin(self._image)
-        SmoothPainter(painter)
+        painter = SmoothPainter(self._image)
 
         # Render top right corner
         # Choose brightest, most saturated color for the given hue. Undefined hues (greys) should default to red hue.

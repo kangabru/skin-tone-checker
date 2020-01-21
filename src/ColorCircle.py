@@ -14,9 +14,8 @@ class ColorCircle(QWidget):
         self.update()
 
     def paintEvent(self, event):
-        painter = QPainter(self)
-        SmoothPainter(painter)
-
+        painter = SmoothPainter(self)
+        
         diameter = min(self.width(), self.height()) - 8
         radius = diameter / 2
         path = QPainterPath()
