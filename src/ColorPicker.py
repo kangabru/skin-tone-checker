@@ -3,6 +3,7 @@ from PyQt5.QtGui import QFontDatabase, QFont, QPainter, QPainterPath, QColor, QP
 from PyQt5.QtWidgets import QPushButton, QApplication, QWidget
 from threading import Timer
 from typing import Callable
+from src.util import GetResourcePath
 
 _ICON_SIZE = 35
 _MARKER_SIZE = 50
@@ -31,7 +32,7 @@ class ColorPicker(QPushButton):
         super().closeEvent(event)
 
     def _setIcon(self, alt=False):
-        self.setIcon(QIcon("icon/icon%s.png" % ("_alt" if alt else "")))
+        self.setIcon(QIcon(GetResourcePath("icon/icon%s.png" % ("_alt" if alt else ""))))
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)

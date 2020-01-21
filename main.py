@@ -9,7 +9,7 @@ from src.ColorHueSlider import ColorHueSlider
 from src.ColorPicker import ColorPicker, getAverageColor
 from src.ColorMessage import ColorMessage, ColorStats
 from src.styles import Stylesheet
-from src.util import UpdateObjectName
+from src.util import UpdateObjectName, GetResourcePath
 
 class App(QDialog):
 
@@ -19,7 +19,7 @@ class App(QDialog):
         super().__init__(*args, **kwargs)
         self.setWindowTitle("Skin Tone Checker")
         self.setGeometry(-1, -1, 250, -1) # left, top, width, height
-        self.setWindowIcon(QIcon("icon/icon.png"))
+        self.setWindowIcon(QIcon(GetResourcePath("icon/icon.png")))
         self.setToolTip("Right click to toggle whether to fix the app above other windows.")
 
         self._windowOnTop = False

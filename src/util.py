@@ -1,6 +1,7 @@
+import sys
+from os import path
 from PyQt5.QtGui import QPainter, QPainterPath
 from PyQt5.QtWidgets import QApplication, QWidget, QStyle
-
 from typing import List, Tuple
 
 def GetLinePath(points: List[Tuple[int, int]]):
@@ -37,3 +38,8 @@ def UpdateObjectName(style: QStyle, widget: QWidget, objectName: str):
     widget.setObjectName(objectName)
     style.unpolish(widget)
     style.polish(widget)
+
+def GetResourcePath(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller."""
+    base_path = getattr(sys, '_MEIPASS', path.dirname(path.dirname(path.abspath(__file__)))) # Two dirs because where inside a folder
+    return path.join(base_path, relative_path)
