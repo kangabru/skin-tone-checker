@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QByteArray, Qt, QRectF, QLineF, pyqtSignal, QSize
-from PyQt5.QtGui import QFontDatabase, QFont, QPainter, QPainterPath, QColor, QPen, QIcon, QImage
+from PyQt5.QtGui import QFontDatabase, QFont, QPainter, QPainterPath, QColor, QPen, QIcon, QImage, QBrush
 from PyQt5.QtWidgets import QPushButton, QApplication, QWidget
 from threading import Timer
 from typing import Callable
@@ -58,6 +58,12 @@ class ColorPicker(QPushButton):
         pos = event.globalPos()
         self._marker.move(pos.x(), pos.y())
 
+    def enterEvent(self, event):
+        self.setCursor(Qt.PointingHandCursor if self._isWatching else Qt.SizeAllCursor)
+
+    def leaveEvent(self, event):
+        self.setCursor(Qt.ArrowCursor)
+
     def isWatching(self) -> bool:
         return self._isWatching
 
@@ -87,11 +93,13 @@ class MarkerWindow(QWidget):
         self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setFixedSize(_MARKER_SIZE, _MARKER_SIZE)
+        self._isPressed = False
         self.move(1, 1)
         self.hide()
 
     def move(self, x, y):
         super().move(x - _MARKER_SIZE / 2, y - _MARKER_SIZE / 2)
+        if not self._isPressed: self.press()
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -105,10 +113,40 @@ class MarkerWindow(QWidget):
         path.addRoundedRect(QRectF(self.rect()), mid, mid)
         painter.setClipPath(path)
 
+        # Set slight transparent fill to enable click and drag
+        if self._isPressed: painter.setBrush(QBrush(QColor(0, 0, 0, 10))) # Fill
+
         # Draw outline
-        marker_color = QColor(0, 174, 255)
-        painter.setPen(QPen(marker_color, 8))
+        painter.setPen(QPen(QColor(0, 174, 255), 8))
         painter.drawRoundedRect(self.rect(), mid, mid)
+
+    def mousePressEvent(self, event):
+        self.press()
+        self.setCursor(Qt.CrossCursor)
+
+    def mouseReleaseEvent(self, event):
+        self.setCursor(Qt.SizeAllCursor)
+
+    def mouseMoveEvent(self, event):
+        pos = event.globalPos()
+        self.move(pos.x(), pos.y())
+
+    def enterEvent(self, event):
+        self.setCursor(Qt.SizeAllCursor)
+        self.press()
+
+    def leaveEvent(self, event):
+        self.setCursor(Qt.ArrowCursor)
+        self.release()
+
+    def press(self):
+        self._isPressed = True
+        self.update()
+
+    def release(self):
+        self._isPressed = False
+        self.update()
+
 
 
 def getAverageColor(event, emit):
