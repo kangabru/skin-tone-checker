@@ -17,7 +17,7 @@ class App(QDialog):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setWindowTitle("Skin Color Picker")
+        self.setWindowTitle("Skin Tone Checker")
         self.setGeometry(-1, -1, 250, -1) # left, top, width, height
         self.setWindowIcon(QIcon("icon/icon.png"))
         self.setToolTip("Right click to toggle whether to fix the app above other windows.")
