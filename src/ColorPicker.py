@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QByteArray, Qt, QRectF, QLineF, pyqtSignal, QSize
-from PyQt5.QtGui import QFontDatabase, QFont, QPainter, QPainterPath, QColor, QPen, QIcon
+from PyQt5.QtGui import QFontDatabase, QFont, QPainter, QPainterPath, QColor, QPen, QIcon, QImage
 from PyQt5.QtWidgets import QPushButton, QApplication, QWidget
 from threading import Timer
 from typing import Callable
@@ -7,6 +7,7 @@ from typing import Callable
 _ICON_SIZE = 35
 _MARKER_SIZE = 50
 _WATCH_TIMEOUT = 0.1 # Seconds
+_PICK_RADIUS = 5
 
 class ColorPicker(QPushButton):
     colorChanged = pyqtSignal(QColor)
@@ -103,12 +104,8 @@ class MarkerWindow(QWidget):
         path.addRoundedRect(QRectF(self.rect()), mid, mid)
         painter.setClipPath(path)
 
-        # Draw cross hairs
-        marker_color = QColor(0, 174, 255)
-        painter.setPen(QPen(marker_color, 4))
-        painter.drawLines(QLineF(mid, 0, mid, size), QLineF(0, mid, size, mid))
-
         # Draw outline
+        marker_color = QColor(0, 174, 255)
         painter.setPen(QPen(marker_color, 8))
         painter.drawRoundedRect(self.rect(), mid, mid)
 
@@ -118,9 +115,18 @@ def getAverageColor(event, emit):
     getAverageColorFromPosition(pos.x(), pos.y(), emit)
 
 def getAverageColorFromPosition(x, y, emit):
-    image = QApplication.primaryScreen().grabWindow(
-        int(QApplication.desktop().winId()),
-        x - 6, y - 6, 13, 13).toImage()
+    window = int(QApplication.desktop().winId())
+
+    r, d = _PICK_RADIUS, 1 + 2 * _PICK_RADIUS
+    image = QApplication.primaryScreen().grabWindow(window, x - r, y - r, d, d).toImage()
+    rect = image.rect()
+
+    painter = QPainter(image)
+    path = QPainterPath()
+    path.addRoundedRect(0, 0, d, d, r, r)
+    painter.setClipPath(path) # Clip so we don't include the marker pixels
+    painter.end()
+
     emit(_getAverageColorFromImage(image))
 
 def _getAverageColorFromImage(image):
@@ -130,7 +136,8 @@ def _getAverageColorFromImage(image):
     for w in range(width):
         for h in range(height):
             color = image.pixelColor(w, h)
-            _r, _g, _b, _ = color.getRgb()
+            _r, _g, _b, _a = color.getRgb()
+            if _a < 1: continue # Ignore transparent pixels
             r, g, b = r + _r, g + _g, b + _b
             count += 1
 
