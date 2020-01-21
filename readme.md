@@ -1,33 +1,38 @@
 # Skin Tone Checker
 
-A small desktop application which can be used to check the accuracy of skin tones. The app also provides basic hints as to what is wrong with the tone.
+A simple desktop colour picker tool which helps you to edit your photos to achieve perfect skin tones.
+
+Key Features:
+- Pick skin tone colours on screen and see hints to improve them.
+- Watch a specific point on screen whilst you make photo adjustments.
+- It's fast, and supports every OS and editing app including Photoshop or Lightroom.
 
 ---
 
-## Features and Usage
+## Usage
 
 ### Colour Check
-- Click anywhere on the application and drag to analyse colours on screen.
-- The picker uses an average of nearby colours rather than a single point.
-- Basic stats and a description are displayed to help indicate skin tone problems.
+- Click and drag anywhere inside the app to analyse colours anywhere on screen.
+- Basic stats and hints are displayed to help indicate skin tone problems.
+- Note that an average of colours is used rather than a single point.
 
 ### Colour Watch
-- Drag the eye dropper tool to place the watcher marker on screen.
-- The colour at the marked position will be watched while the user can update settings in real time.
-- Click anywhere on screen to disable the watcher.
+- Click and drag the eye dropper tool to place a watch marker anywhere on screen.
+- The colour at the marker will be watched to allow the user to edit the photo in real time.
+- Click anywhere inside the app to disable the watcher.
+- Drag the marker to update its position.
 
-### Show Above Windows
-- Right click anywhere on the application to toggle whether the application is fixed above other windows.
+### Fix Above Windows
+- Right click anywhere inside the app to toggle whether the app is fixed above others.
 - Usage of the picker tool temporarily fixes the window until the watcher is deactivated.
+- A dark border is displayed whilst the app is fixed above others.
 
-### Test
-- You can validate the accuracy using a [popular face dataset](http://vis-www.cs.umass.edu/lfw/alpha_all_30.html).
+### Colour Correction
+This app simply displays information about skin tone colours and thus can be used with any external editing application. It does not provide any colour correction abilities itself.
 
----
-
-## Technical Details
-
-The application is built with python and [Qt](https://pyqt5.com).
+- Determine whether skin tones have the correct hue, saturation, and brightness.
+- Correct a photo's white balance via the skin tones in the photo instead of using a neutral gray indicator.
+- Adjust the tint of a photo in your editing program to fix incorrect hues.
 
 ---
 
@@ -39,7 +44,7 @@ The application is built with python and [Qt](https://pyqt5.com).
 
 `$ virtualenv env`
 
-Activate the environment via the `env/Scripts` scripts or via your IDE.
+Activate the environment via your IDE or manually with the scripts under `env/Scripts`.
 
 ### Install Packages
 
@@ -49,7 +54,7 @@ Activate the environment via the `env/Scripts` scripts or via your IDE.
 
 `$ python package.py`
 
-Note that [Pyinstaller](https://pyinstaller.readthedocs.io/en/stable/) is used to package the application.
+Note that [Pyinstaller](https://pyinstaller.readthedocs.io/en/stable/) is used to package the app.
 
 ### Run Locally
 
@@ -57,7 +62,14 @@ Note that [Pyinstaller](https://pyinstaller.readthedocs.io/en/stable/) is used t
 
 ---
 
+## Technical Details
+
+- The app is built with [Python](https://www.python.org/downloads/) and [Qt](https://pyqt5.com).
+- The perfect skin tone range was manually chosen based on [this PixPerfect video](https://www.youtube.com/watch?v=Wvr8LCSuFjE) and further analysis of [peoples' faces](http://vis-www.cs.umass.edu/lfw/alpha_all_30.html).
+
+---
+
 ## Acknowledgments
 
-- The [PixPerfect](https://www.youtube.com/watch?v=Wvr8LCSuFjE) video for the inspiration.
-- This [Qt widget repo](https://github.com/PyQt5/CustomWidgets) for the core colour related widgets.
+- [This PixPerfect video](https://www.youtube.com/watch?v=Wvr8LCSuFjE) for the inspiration.
+- [This Qt widget repo](https://github.com/PyQt5/CustomWidgets) for the core colour related widgets.
