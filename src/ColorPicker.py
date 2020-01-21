@@ -42,7 +42,7 @@ class ColorPicker(QPushButton):
             self._startWatching()
         else:
             self.stopWatching()
-            self._setWindowOnTop(self._wasWindowOnTop)
+            self.resetOnTop()
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
@@ -51,8 +51,10 @@ class ColorPicker(QPushButton):
         if self._isWatching:
             self._wasWindowOnTop = self._getWindowOnTop()
             self._setWindowOnTop(True)
+            event.accept() # Stop propagation to main widget so it doesn't reset the on top status
         else:
             self._setIcon()
+
 
     def mouseMoveEvent(self, event):
         pos = event.globalPos()
@@ -79,6 +81,11 @@ class ColorPicker(QPushButton):
         self._marker.hide()
         self._isWatching = False
         self._timer and self._timer.cancel()
+
+    def resetOnTop(self):
+        if self._wasWindowOnTop is not None:
+            self._setWindowOnTop(self._wasWindowOnTop)
+            self._wasWindowOnTop = None
 
     def _watch(self):
         if self._isWatching:

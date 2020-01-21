@@ -82,6 +82,7 @@ class App(QDialog):
 
     def mouseReleaseEvent(self, event):
         self.setCursor(Qt.ArrowCursor)
+        self.colorPicker.resetOnTop()
 
     def mouseMoveEvent(self, event):
         getAverageColor(event, self.colorChanged.emit)
