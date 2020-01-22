@@ -92,3 +92,4 @@ Note that [Pyinstaller](https://pyinstaller.readthedocs.io/en/stable/) is used t
 
 - [This PixPerfect video](https://www.youtube.com/watch?v=Wvr8LCSuFjE) for the inspiration.
 - [This Qt widget repo](https://github.com/PyQt5/CustomWidgets) for the colour related widgets.
+- Photos by [Ayo Ogunseinde](https://unsplash.com/photos/sibVwORYqs0) and [Brooke Cagle](https://unsplash.com/photos/HRZUzoX1e6w) on [Unsplash](https://unsplash.com/).
