@@ -11,6 +11,16 @@ Key Features:
 
 ---
 
+## Download
+
+| OS | Version | Download |
+|:---:|:---:|:---:|
+| Windows | [v1.0](https://github.com/kangabru/skin-tone-checker/releases/tag/v1.0) | [Download](https://github.com/kangabru/skin-tone-checker/releases/download/v1.0/Skin.Tone.Checker.exe) |
+| Linux | - | [Install from source](#Install) |
+| MacOS | - | [Install from source](#Install) |
+
+---
+
 ## Usage
 
 ### Colour Check
@@ -69,15 +79,15 @@ Activate the environment via your IDE or manually with the scripts under `env/Sc
 
 `$ pip install -r requirements.txt`
 
+### Run Locally
+
+`$ python main.py`
+
 ### Package Executable
 
 `$ python package.py`
 
 Note that [Pyinstaller](https://pyinstaller.readthedocs.io/en/stable/) is used to package the app. Adjustments may be required to package the app for non-windows operating systems.
-
-### Run Locally
-
-`$ python main.py`
 
 ---
 
@@ -92,4 +102,4 @@ Note that [Pyinstaller](https://pyinstaller.readthedocs.io/en/stable/) is used t
 
 - [This PixPerfect video](https://www.youtube.com/watch?v=Wvr8LCSuFjE) for the inspiration.
 - [This Qt widget repo](https://github.com/PyQt5/CustomWidgets) for the colour related widgets.
-- Photos by [Ayo Ogunseinde](https://unsplash.com/photos/sibVwORYqs0) and [Brooke Cagle](https://unsplash.com/photos/HRZUzoX1e6w) on [Unsplash](https://unsplash.com/).
+- Photos by [Brooke Cagle](https://unsplash.com/photos/HRZUzoX1e6w) and [Ayo Ogunseinde](https://unsplash.com/photos/sibVwORYqs0) on [Unsplash](https://unsplash.com/).
