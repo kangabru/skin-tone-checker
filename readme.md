@@ -1,4 +1,4 @@
-# Skin Tone Checker
+# ![Icon](https://raw.githubusercontent.com/kangabru/skin-tone-checker/assets/readme/logo.png) Skin Tone Checker
 
 A simple desktop colour picker tool which helps you to edit your photos to achieve perfect skin tones.
 
@@ -6,6 +6,8 @@ Key Features:
 - Pick skin tone colours on screen and see hints to improve them.
 - Watch a specific point on screen whilst you make photo adjustments.
 - It's fast, and supports every OS and editing app like Photoshop or Lightroom.
+
+![Banner Image](https://raw.githubusercontent.com/kangabru/skin-tone-checker/assets/readme/banner.jpg)
 
 ---
 
