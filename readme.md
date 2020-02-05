@@ -24,7 +24,7 @@ Key Features:
 ## Usage
 
 ### Colour Check
-- Click and drag anywhere inside the app to analyse colours anywhere on screen.
+- Click inside the app and drag to analyse colours anywhere on screen.
 - Basic stats and hints are displayed to help indicate skin tone problems.
 - Note that a colour average is used rather than a single pixel colour.
 
