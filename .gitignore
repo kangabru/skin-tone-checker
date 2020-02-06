@@ -1,8 +1,8 @@
+_site/
 .vscode/
-assets/
-build/
-dist/
-env/
 *.exe
 *.pyc
 *.spec
+build/
+dist/
+env/
