@@ -89,7 +89,7 @@ class ColorPicker(QPushButton):
 
     def _watch(self):
         if self._isWatching:
-            x, y = self._marker.pos().x(), self._marker.pos().y()
+            x, y = self._marker.pos().x() + _MARKER_SIZE / 2, self._marker.pos().y() + _MARKER_SIZE / 2
             getAverageColorFromPosition(x, y, self.colorChanged.emit)
             self._startWatching()
 
@@ -121,7 +121,7 @@ class MarkerWindow(QWidget):
         painter.setClipPath(path)
 
         # Set slight transparent fill to enable click and drag
-        if self._isPressed: painter.setBrush(QBrush(QColor(0, 0, 0, 10))) # Fill
+        if self._isPressed: painter.setBrush(QBrush(QColor(255, 255, 255, 1))) # Fill
 
         # Draw outline
         painter.setPen(QPen(QColor(0, 174, 255), 8))
